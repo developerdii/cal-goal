@@ -174,12 +174,12 @@ function submit() {
 }
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-700 dark:bg-slate-800'
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 </script>
 
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
-    <form class="space-y-4" @submit.prevent="submit">
+    <form id="food-form" class="space-y-3" @submit.prevent="submit">
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
           {{ t('entry.name') }}
@@ -293,10 +293,12 @@ const inputClass =
           {{ t('form.total') }}: {{ formatKcal(total, locale) }} kcal
         </p>
       </template>
+    </form>
 
+    <template #footer>
       <label
         v-if="!isLibrary"
-        class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
+        class="flex cursor-pointer items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:bg-slate-800/50 dark:text-slate-300"
       >
         <input
           v-model="saveToFoods"
@@ -305,8 +307,7 @@ const inputClass =
         />
         <span>{{ t('form.saveToFoods') }}</span>
       </label>
-
-      <div class="flex gap-2 pt-1">
+      <div class="flex gap-2 pt-2">
         <button
           v-if="entry || food"
           type="button"
@@ -325,11 +326,12 @@ const inputClass =
         </button>
         <button
           type="submit"
+          form="food-form"
           class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
         >
           {{ t('common.save') }}
         </button>
       </div>
-    </form>
+    </template>
   </BaseModal>
 </template>

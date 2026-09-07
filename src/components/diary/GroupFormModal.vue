@@ -91,10 +91,6 @@ function removeItem(id) {
   if (form.items.length === 0) form.items.push(emptyItem())
 }
 
-function toggleMode(it) {
-  it.mode = it.mode === 'kcal' ? 'amount' : 'kcal'
-}
-
 function itemTotal(it) {
   if (it.mode === 'amount') {
     return resolveKcal(it.amount, it.perKcal, it.quantity || it.amount)
@@ -265,14 +261,24 @@ const compactInputClass =
                 class="w-16 shrink-0 text-right"
                 :class="compactInputClass"
               />
-              <button
-                type="button"
-                :title="it.mode === 'kcal' ? t('form.toAmount') : t('form.toKcal')"
-                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-                @click="toggleMode(it)"
-              >
-                <Icon :name="it.mode === 'kcal' ? 'scale' : 'bolt'" class="h-4 w-4" />
-              </button>
+              <div class="flex shrink-0 overflow-hidden rounded-md border border-slate-300 dark:border-slate-700">
+                <button
+                  type="button"
+                  class="px-1.5 py-1 text-[11px] font-semibold transition-colors"
+                  :class="it.mode === 'kcal' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-500 dark:bg-slate-800 dark:text-slate-300'"
+                  @click="it.mode = 'kcal'"
+                >
+                  kcal
+                </button>
+                <button
+                  type="button"
+                  class="px-1.5 py-1 text-[11px] font-semibold transition-colors"
+                  :class="it.mode === 'amount' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-500 dark:bg-slate-800 dark:text-slate-300'"
+                  @click="it.mode = 'amount'"
+                >
+                  {{ t('form.modeAmount') }}
+                </button>
+              </div>
               <button
                 type="button"
                 class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"

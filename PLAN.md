@@ -197,7 +197,7 @@ Single versioned key `calgoal`:
 - [x] Header layout: logo + name + tagline (left) · TR/EN + theme toggle (right); tagline hides on mobile
 - [x] Weekly analysis: weeks with no entries (past/current/future) show a clean "no entries" state
 - [x] Foods library (favorites): save / quick-add / manage + per-unit calorie entry (grams, servings…)
-- [x] "Add Group" modal redesign (live total, compact rows, icon mode toggle, sticky footer)
+- [x] "Add Group" modal redesign (live total, compact rows, labeled mode toggle, sticky footer); "Add Food" modal aligned to match
 
 ## Change Log (recent)
 
