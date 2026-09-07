@@ -217,30 +217,15 @@ const compactInputClass =
       </div>
 
       <div>
-        <div class="mb-2 flex items-center justify-between">
-          <label class="text-sm font-medium text-slate-600 dark:text-slate-300">
-            {{ t('group.items') }}
-          </label>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-              {{ t('form.total') }}: {{ formatKcal(groupTotal, locale) }} kcal
-            </span>
-            <button
-              type="button"
-              class="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-xs font-semibold text-white transition-colors hover:bg-emerald-600"
-              @click="addItem"
-            >
-              <Icon name="plus" class="h-3.5 w-3.5" />
-              {{ t('group.addItem') }}
-            </button>
-          </div>
-        </div>
+        <label class="mb-2 block text-sm font-medium text-slate-600 dark:text-slate-300">
+          {{ t('group.items') }}
+        </label>
 
-        <div class="space-y-1.5">
+        <div class="divide-y divide-slate-200 dark:divide-slate-800">
           <div
             v-for="it in form.items"
             :key="it.id"
-            class="rounded-lg border border-slate-200 p-2 dark:border-slate-700"
+            class="py-2.5 first:pt-0"
           >
             <div class="flex items-center gap-1.5">
               <input
@@ -257,8 +242,8 @@ const compactInputClass =
                 inputmode="numeric"
                 min="1"
                 step="1"
-                :placeholder="t('entry.caloriesPlaceholder')"
-                class="w-16 shrink-0 text-right"
+                placeholder="kcal"
+                class="w-24 shrink-0 text-right"
                 :class="compactInputClass"
               />
               <div class="flex shrink-0 overflow-hidden rounded-md border border-slate-300 dark:border-slate-700">
@@ -311,7 +296,7 @@ const compactInputClass =
                   inputmode="numeric"
                   min="1"
                   step="1"
-                  placeholder="110"
+                  placeholder="kcal"
                   :class="compactInputClass"
                 />
               </div>
@@ -333,6 +318,20 @@ const compactInputClass =
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="mt-2 flex items-center justify-between">
+          <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">
+            {{ t('form.total') }}: {{ formatKcal(groupTotal, locale) }} kcal
+          </span>
+          <button
+            type="button"
+            class="flex items-center gap-1 rounded-md bg-emerald-500 px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600"
+            @click="addItem"
+          >
+            <Icon name="plus" class="h-3.5 w-3.5" />
+            {{ t('group.addItem') }}
+          </button>
         </div>
         <p v-if="errors.items" class="mt-1 text-xs text-rose-500">{{ errors.items }}</p>
       </div>

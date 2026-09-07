@@ -222,7 +222,7 @@ const inputClass =
           inputmode="numeric"
           min="1"
           step="1"
-          :placeholder="t('entry.caloriesPlaceholder')"
+          placeholder="kcal"
           :class="inputClass"
         />
         <p v-if="errors.calories" class="mt-1 text-xs text-rose-500">{{ errors.calories }}</p>
@@ -266,7 +266,7 @@ const inputClass =
               inputmode="numeric"
               min="1"
               step="1"
-              placeholder="110"
+              placeholder="kcal"
               :class="inputClass"
             />
             <p v-if="errors.perKcal" class="mt-1 text-xs text-rose-500">{{ errors.perKcal }}</p>
