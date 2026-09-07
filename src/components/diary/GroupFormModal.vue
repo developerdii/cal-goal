@@ -310,7 +310,7 @@ const compactInputClass =
               <div class="flex shrink-0 overflow-hidden rounded-md border border-slate-300 dark:border-slate-700">
                 <button
                   type="button"
-                  class="px-1.5 py-1.5 text-[11px] leading-5 font-semibold transition-colors"
+                  class="flex h-8 items-center justify-center px-1.5 text-[11px] font-semibold transition-colors"
                   :class="it.mode === 'kcal' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-500 dark:bg-slate-800 dark:text-slate-300'"
                   @click="it.mode = 'kcal'"
                 >
@@ -318,7 +318,7 @@ const compactInputClass =
                 </button>
                 <button
                   type="button"
-                  class="px-1.5 py-1.5 text-[11px] leading-5 font-semibold transition-colors"
+                  class="flex h-8 items-center justify-center px-1.5 text-[11px] font-semibold transition-colors"
                   :class="it.mode === 'amount' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-500 dark:bg-slate-800 dark:text-slate-300'"
                   @click="it.mode = 'amount'"
                 >
@@ -327,7 +327,7 @@ const compactInputClass =
               </div>
               <button
                 type="button"
-                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
                 aria-label="Remove item"
                 @click="removeItem(it.id)"
               >
