@@ -34,6 +34,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
   amount. The daily target is now calculated, and weekly weight projection uses actual
   intake vs. maintenance (7,000 kcal ≈ 1 kg). Old single-goal data is migrated
   automatically (treated as maintenance with "maintain" goal).
+- **Saved-foods picker redesigned**: the add flow now always shows a "Saved foods"
+  section with a clear empty state ("No saved foods yet"), the last 5 items, and a
+  "See all" action that opens a searchable modal when more are available. The confusing
+  per-item star button in "Add group" was replaced by a top-level "Add from saved
+  foods" button that opens the same searchable modal.
 
 ### Fixed
 - Weekly analysis now shows a clean "no entries" empty state (and hides the summary

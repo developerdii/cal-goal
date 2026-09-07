@@ -58,5 +58,13 @@ export const useFoodsStore = defineStore('foods', () => {
       .reverse()
   }
 
-  return { foods, init, getById, upsert, remove, recent }
+  // All items of a type (most recent first).
+  function all(type) {
+    return foods.value
+      .filter((f) => f.type === type)
+      .slice()
+      .reverse()
+  }
+
+  return { foods, init, getById, upsert, remove, recent, all }
 })

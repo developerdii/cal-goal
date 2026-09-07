@@ -136,6 +136,11 @@
     "emptyTitle": "No saved foods yet",
     "emptyHint": "Add foods here, or save them while logging an entry.",
     "deleteTitle": "Delete food",
-    "deleteConfirm": "Are you sure you want to delete this saved food?"
+    "deleteConfirm": "Are you sure you want to delete this saved food?",
+    "seeAll": "See all",
+    "searchPlaceholder": "Search",
+    "noResults": "No results",
+    "addFromSaved": "Add from saved",
+    "savedGroups": "Saved groups"
   }
 }

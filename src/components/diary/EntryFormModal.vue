@@ -7,6 +7,7 @@ import { resolveKcal } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { useFoodsStore } from '@/stores/foodsStore'
 import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
+import SavedFoodsModal from '@/components/diary/SavedFoodsModal.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -22,6 +23,8 @@ const { t, locale } = useI18n()
 const isLibrary = computed(() => props.context === 'library')
 const foodsStore = useFoodsStore()
 const savedFoods = computed(() => foodsStore.recent('food', 5))
+const allFoods = computed(() => foodsStore.all('food'))
+const foodsPickerOpen = ref(false)
 
 const form = reactive({
   name: '',
@@ -50,6 +53,7 @@ const total = computed(() => {
 watch(
   () => props.open,
   (open) => {
+    foodsPickerOpen.value = false
     if (!open) return
     resetForm()
     const src = isLibrary.value ? props.food : props.entry
@@ -104,7 +108,13 @@ function fillFromSaved(food) {
 }
 
 function onQuickAdd(food) {
+  foodsPickerOpen.value = false
   emit('quickAdd', food)
+}
+
+function fillFromSavedModal(food) {
+  foodsPickerOpen.value = false
+  fillFromSaved(food)
 }
 
 function validate() {
@@ -202,11 +212,17 @@ const inputClass =
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <form id="food-form" class="space-y-3" @submit.prevent="submit">
-      <div v-if="!isLibrary && !entry && savedFoods.length">
+      <div v-if="!isLibrary && !entry">
         <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
           {{ t('foods.heading') }}
         </p>
-        <SavedFoodsPicker :items="savedFoods" @quickAdd="onQuickAdd" @fill="fillFromSaved" />
+        <SavedFoodsPicker
+          :items="savedFoods"
+          :total="allFoods.length"
+          @quickAdd="onQuickAdd"
+          @fill="fillFromSaved"
+          @seeAll="foodsPickerOpen = true"
+        />
       </div>
 
       <div>
@@ -363,4 +379,13 @@ const inputClass =
       </div>
     </template>
   </BaseModal>
+
+  <SavedFoodsModal
+    :open="foodsPickerOpen"
+    :title="t('foods.heading')"
+    :items="allFoods"
+    @close="foodsPickerOpen = false"
+    @select="fillFromSavedModal"
+    @quickAdd="onQuickAdd"
+  />
 </template>

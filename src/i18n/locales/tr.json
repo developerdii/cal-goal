@@ -136,6 +136,11 @@
     "emptyTitle": "Henüz kayıtlı besin yok",
     "emptyHint": "Buradan besin ekleyin veya kayıt girerken kaydedin.",
     "deleteTitle": "Besin sil",
-    "deleteConfirm": "Bu kayıtlı besin silinsin mi?"
+    "deleteConfirm": "Bu kayıtlı besin silinsin mi?",
+    "seeAll": "Tümünü gör",
+    "searchPlaceholder": "Ara",
+    "noResults": "Sonuç bulunamadı",
+    "addFromSaved": "Kayıtlıdan ekle",
+    "savedGroups": "Kayıtlı gruplar"
   }
 }

@@ -1,16 +1,23 @@
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/ui/Icon.vue'
 import { formatKcal } from '@/utils/format'
 
 const props = defineProps({
   items: { type: Array, default: () => [] },
+  total: { type: Number, default: null },
   fillOnly: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['quickAdd', 'fill'])
+const emit = defineEmits(['quickAdd', 'fill', 'seeAll'])
 
 const { t, locale } = useI18n()
+
+const hasMore = computed(() => {
+  const total = props.total ?? props.items.length
+  return total > props.items.length
+})
 
 function summary(item) {
   if (item.type === 'group') {
@@ -29,6 +36,13 @@ function summary(item) {
 
 <template>
   <div class="space-y-1.5">
+    <div
+      v-if="!items.length"
+      class="rounded-lg border border-dashed border-slate-300 px-3 py-4 text-center dark:border-slate-700"
+    >
+      <p class="text-xs text-slate-400">{{ t('foods.emptyTitle') }}</p>
+    </div>
+
     <div
       v-for="item in items"
       :key="item.id"
@@ -62,5 +76,15 @@ function summary(item) {
         <Icon name="pencil" class="h-4 w-4" />
       </button>
     </div>
+
+    <button
+      v-if="hasMore"
+      type="button"
+      class="flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-50 dark:border-slate-700 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+      @click="emit('seeAll')"
+    >
+      <Icon name="chevronRight" class="h-3.5 w-3.5" />
+      {{ t('foods.seeAll') }}
+    </button>
   </div>
 </template>
