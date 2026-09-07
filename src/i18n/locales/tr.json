@@ -1,0 +1,88 @@
+{
+  "app": {
+    "title": "CalGoal",
+    "tagline": "Günlük alımınızı takip edin"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "week": "Hafta",
+    "settings": "Ayarlar"
+  },
+  "common": {
+    "today": "Bugün",
+    "add": "Ekle",
+    "save": "Kaydet",
+    "cancel": "Vazgeç",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "confirm": "Onayla",
+    "previous": "Önceki",
+    "next": "Sonraki"
+  },
+  "home": {
+    "heading": "Günlük Kayıt",
+    "entriesTitle": "Kayıtlar",
+    "addEntry": "Kayıt ekle",
+    "addEntryTitle": "Kayıt ekle",
+    "addFood": "Besin ekle",
+    "addGroup": "Grup ekle",
+    "foodOptionHint": "Tek bir besin öğesi",
+    "groupOptionHint": "Tek bir ad altında birden çok öğe",
+    "emptyTitle": "Henüz kayıt yok",
+    "emptyHint": "İlk besin kaydınızı eklemek için “Kayıt ekle”ye dokunun.",
+    "consumed": "Tüketilen",
+    "goal": "Hedef",
+    "under": "Hedefin {amount} kcal altında",
+    "over": "Hedefin {amount} kcal üzerinde",
+    "onTrack": "Tam hedefte"
+  },
+  "week": {
+    "heading": "Haftalık Analiz",
+    "totalBalance": "Haftalık denge",
+    "weightChange": "Tahmini kilo değişimi",
+    "estimatedWeightHint": "7.000 kcal ≈ 1 kg varsayımına göre",
+    "noData": "Bu hafta kayıt yok",
+    "upcoming": "Gelecek"
+  },
+  "entry": {
+    "name": "Ad",
+    "namePlaceholder": "örn. Muz",
+    "calories": "Kalori",
+    "caloriesPlaceholder": "örn. 105",
+    "addTitle": "Kayıt ekle",
+    "editTitle": "Kaydı düzenle",
+    "deleteTitle": "Kaydı sil",
+    "deleteConfirm": "Bu kaydı silmek istediğinize emin misiniz?",
+    "validation": {
+      "nameRequired": "Lütfen bir ad girin.",
+      "caloriesRequired": "Lütfen kalori girin.",
+      "caloriesPositive": "Kalori sıfırdan büyük olmalıdır."
+    }
+  },
+  "group": {
+    "name": "Grup adı",
+    "namePlaceholder": "örn. Kahvaltı",
+    "items": "Öğeler",
+    "addItem": "Öğe ekle",
+    "addTitle": "Grup ekle",
+    "editTitle": "Grubu düzenle",
+    "validation": {
+      "nameRequired": "Lütfen bir grup adı girin.",
+      "noItems": "En az bir öğe ekleyin.",
+      "itemInvalid": "Her öğenin bir adı ve sıfırdan büyük kalorisi olmalıdır."
+    }
+  },
+  "settings": {
+    "heading": "Ayarlar",
+    "goalLabel": "Günlük kalori hedefi",
+    "goalHint": "Günlük fazla/açık hesabınız için kullanılır. Daha sonra kişisel verilerinizden hesaplanan bir değere dönüşebilir.",
+    "weightLabel": "Mevcut kilo",
+    "weightUnit": "kg",
+    "weightHint": "Haftalık dengenizle birleştirilerek kilo değişimi tahmin edilir.",
+    "saved": "Kaydedildi",
+    "dangerZone": "Tehlikeli bölge",
+    "resetTitle": "Tüm verileri sıfırla",
+    "resetConfirmMessage": "Tüm kayıtlar silinecek ve hedef ile kilo varsayılan değerlere dönecek. Bu işlem geri alınamaz.",
+    "resetAction": "Sıfırla"
+  }
+}

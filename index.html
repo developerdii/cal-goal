@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10b981" />
+    <title>CalGoal</title>
+    <script>
+      // Pre-paint theme bootstrap to avoid a flash of the wrong theme.
+      // (This is a bootstrap-only exception; all other persistence goes through storageService.)
+      try {
+        var raw = localStorage.getItem('calgoal')
+        var prefs = raw ? JSON.parse(raw).prefs : null
+        var theme = prefs && prefs.theme
+          ? prefs.theme
+          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        if (theme === 'dark') document.documentElement.classList.add('dark')
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
