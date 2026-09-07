@@ -9,6 +9,7 @@ const route = useRoute()
 const items = [
   { to: '/', key: 'home', icon: 'home' },
   { to: '/week', key: 'week', icon: 'chart' },
+  { to: '/foods', key: 'foods', icon: 'star' },
   { to: '/settings', key: 'settings', icon: 'gear' },
 ]
 </script>
@@ -17,7 +18,7 @@ const items = [
   <nav
     class="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
   >
-    <div class="mx-auto grid w-full max-w-lg grid-cols-3">
+    <div class="mx-auto grid w-full max-w-lg grid-cols-4">
       <RouterLink
         v-for="item in items"
         :key="item.to"

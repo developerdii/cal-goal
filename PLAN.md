@@ -64,6 +64,14 @@ real database backend.
 - [x] Responsive header (tagline hides on small screens, no overlap)
 - [x] Create CHANGELOG.md and log the change
 
+### M9 — Foods library & per-unit calories ✅
+- [x] `foods` storage + `foodsStore` + `utils/{units,nutrition}.js` + nutrition tests
+- [x] Food form: kcal/amount mode toggle + "save to foods"
+- [x] Group form: per-row kcal/amount modes + "save to foods"
+- [x] Quick-add saved foods from the add chooser
+- [x] "Foods" screen (list + create/edit/delete) + nav tab + route
+- [x] i18n (units, form, foods)
+
 ## Folder / File Structure
 
 ```
@@ -120,12 +128,14 @@ Single versioned key `calgoal`:
 
 ```jsonc
 {
-  "version": 1,
+  "version": 2,
   "days": {
     "2026-09-07": {                    // local date key YYYY-MM-DD
       "date": "2026-09-07",
       "entries": [
-        { "id": "uuid", "type": "item",  "name": "Banana", "calories": 105, "createdAt": "ISO-8601" },
+        { "id": "uuid", "type": "item", "name": "Banana", "calories": 105, "createdAt": "ISO-8601" },
+        { "id": "uuid", "type": "item", "name": "Chicken", "calories": 275,
+          "unit": "g", "amount": 100, "perKcal": 110, "quantity": 250, "createdAt": "ISO-8601" },
         { "id": "uuid", "type": "group", "name": "Breakfast",
           "items": [ { "id": "uuid", "name": "Oats", "calories": 300 } ], "createdAt": "ISO-8601" }
       ]
@@ -138,7 +148,12 @@ Single versioned key `calgoal`:
   "prefs": {
     "locale": "en",                    // 'en' | 'tr'
     "theme": "light"                   // 'light' | 'dark'
-  }
+  },
+  "foods": [                           // favorites library
+    { "id": "uuid", "type": "food", "name": "Chicken", "unit": "g", "amount": 100, "perKcal": 110 },
+    { "id": "uuid", "type": "food", "name": "Banana", "calories": 105 },
+    { "id": "uuid", "type": "group", "name": "Chicken dish", "items": [ { "name": "Rice", "calories": 200 } ] }
+  ]
 }
 ```
 
@@ -174,6 +189,7 @@ Single versioned key `calgoal`:
 - [x] Rebrand "Calorie Counter" → "CalGoal" (app name, tab title, i18n, package.json, localStorage key)
 - [x] Header layout: logo + name + tagline (left) · TR/EN + theme toggle (right); tagline hides on mobile
 - [x] Weekly analysis: weeks with no entries (past/current/future) show a clean "no entries" state
+- [x] Foods library (favorites): save / quick-add / manage + per-unit calorie entry (grams, servings…)
 
 ## Change Log (recent)
 

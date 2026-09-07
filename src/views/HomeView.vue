@@ -3,8 +3,11 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDiaryStore } from '@/stores/diaryStore'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useFoodsStore } from '@/stores/foodsStore'
 import { toDateKey, parseDateKey, addDays, getWeekDays } from '@/utils/date'
 import { formatDayLong, formatKcal } from '@/utils/format'
+import { resolveKcal } from '@/utils/nutrition'
+import { createId } from '@/utils/id'
 import WeekStrip from '@/components/diary/WeekStrip.vue'
 import DaySummary from '@/components/diary/DaySummary.vue'
 import EntryList from '@/components/diary/EntryList.vue'
@@ -16,6 +19,7 @@ import Icon from '@/components/ui/Icon.vue'
 
 const diary = useDiaryStore()
 const settings = useSettingsStore()
+const foods = useFoodsStore()
 const { t, locale } = useI18n()
 
 const todayKey = toDateKey(new Date())
@@ -68,15 +72,73 @@ function openEdit(entry) {
   else openFood(entry)
 }
 
+function toFoodDefinition(payload) {
+  if (payload.unit) {
+    return { type: 'food', name: payload.name, unit: payload.unit, amount: payload.amount, perKcal: payload.perKcal }
+  }
+  return { type: 'food', name: payload.name, calories: payload.calories }
+}
+
+function toGroupDefinition(payload) {
+  return {
+    type: 'group',
+    name: payload.name,
+    items: payload.items.map((it) =>
+      it.unit
+        ? { name: it.name, unit: it.unit, amount: it.amount, perKcal: it.perKcal }
+        : { name: it.name, calories: it.calories },
+    ),
+  }
+}
+
 function onSaveFood(payload) {
-  if (editingEntry.value) diary.updateEntry(selectedKey.value, editingEntry.value.id, payload)
-  else diary.addEntry(selectedKey.value, payload)
+  const { saveToFoods, ...diaryPayload } = payload
+  if (editingEntry.value) diary.updateEntry(selectedKey.value, editingEntry.value.id, diaryPayload)
+  else diary.addEntry(selectedKey.value, diaryPayload)
+  if (saveToFoods) foods.upsert(toFoodDefinition(payload))
   foodOpen.value = false
 }
 function onSaveGroup(payload) {
-  if (editingEntry.value) diary.updateEntry(selectedKey.value, editingEntry.value.id, payload)
-  else diary.addGroup(selectedKey.value, payload)
+  const { saveToFoods, ...diaryPayload } = payload
+  if (editingEntry.value) diary.updateEntry(selectedKey.value, editingEntry.value.id, diaryPayload)
+  else diary.addGroup(selectedKey.value, diaryPayload)
+  if (saveToFoods) foods.upsert(toGroupDefinition(payload))
   groupOpen.value = false
+}
+
+function onQuickAddFood(food, quantity) {
+  if (food.unit && (!quantity || quantity <= 0)) return
+  const measured = !!food.unit
+  diary.addEntry(selectedKey.value, {
+    name: food.name,
+    calories: measured ? resolveKcal(food.amount, food.perKcal, quantity) : Number(food.calories),
+    quantity: measured ? quantity : null,
+    unit: food.unit ?? null,
+    amount: measured ? food.amount : null,
+    perKcal: measured ? food.perKcal : null,
+    foodId: food.id,
+  })
+  chooserOpen.value = false
+}
+
+function onQuickAddGroup(food) {
+  diary.addGroup(selectedKey.value, {
+    name: food.name,
+    items: (food.items || []).map((it) => {
+      const measured = !!it.unit
+      return {
+        id: createId(),
+        name: it.name,
+        calories: measured ? Number(it.perKcal) : Number(it.calories),
+        quantity: measured ? it.amount : null,
+        unit: it.unit ?? null,
+        amount: measured ? it.amount : null,
+        perKcal: measured ? it.perKcal : null,
+      }
+    }),
+    foodId: food.id,
+  })
+  chooserOpen.value = false
 }
 function onDeleteFromModal() {
   if (editingEntry.value) diary.removeEntry(selectedKey.value, editingEntry.value.id)
@@ -150,6 +212,8 @@ const arrowClass =
       :open="chooserOpen"
       @close="chooserOpen = false"
       @select="onChooserSelect"
+      @quickAddFood="onQuickAddFood"
+      @quickAddGroup="onQuickAddGroup"
     />
 
     <EntryFormModal

@@ -46,6 +46,11 @@ export const useDiaryStore = defineStore('diary', () => {
       type: 'item',
       name: payload.name,
       calories: Number(payload.calories),
+      quantity: payload.quantity ?? null,
+      unit: payload.unit ?? null,
+      amount: payload.amount ?? null,
+      perKcal: payload.perKcal ?? null,
+      foodId: payload.foodId ?? null,
       createdAt: new Date().toISOString(),
     }
     persistDay(dateKey, [...getEntries(dateKey), entry])
@@ -60,7 +65,12 @@ export const useDiaryStore = defineStore('diary', () => {
         id: it.id || createId(),
         name: it.name,
         calories: Number(it.calories),
+        quantity: it.quantity ?? null,
+        unit: it.unit ?? null,
+        amount: it.amount ?? null,
+        perKcal: it.perKcal ?? null,
       })),
+      foodId: payload.foodId ?? null,
       createdAt: new Date().toISOString(),
     }
     persistDay(dateKey, [...getEntries(dateKey), entry])

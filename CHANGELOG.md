@@ -7,6 +7,12 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **Foods library (favorites)**: save foods/groups while logging ("Save to my foods"),
+  quick-add them from the add screen, and manage them on a new "Foods" tab.
+- **Per-unit calories**: log foods by amount (e.g. "100 g = 110 kcal") and enter a
+  quantity (e.g. 250 g) to auto-calculate calories — for single foods and group items.
+
 ### Changed
 - Rebranded the application from **"Calorie Counter"** to **"CalGoal"**:
   - header/logo area, browser tab `<title>`, i18n (`en.json` + `tr.json`), and `package.json` name.

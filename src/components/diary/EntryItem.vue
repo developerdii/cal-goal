@@ -10,12 +10,16 @@ const props = defineProps({
 
 const emit = defineEmits(['edit', 'delete'])
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 const isGroup = computed(() => props.entry.type === 'group')
 const groupTotal = computed(() =>
   (props.entry.items || []).reduce((s, it) => s + (Number(it.calories) || 0), 0),
 )
+
+function amountText(it) {
+  return it.unit ? `${it.quantity} ${t(`units.${it.unit}`)} · ` : ''
+}
 </script>
 
 <template>
@@ -36,11 +40,11 @@ const groupTotal = computed(() =>
             class="flex items-center justify-between gap-2 text-xs text-slate-400"
           >
             <span class="truncate">{{ it.name }}</span>
-            <span class="shrink-0">{{ formatKcal(it.calories, locale) }} kcal</span>
+            <span class="shrink-0">{{ amountText(it) }}{{ formatKcal(it.calories, locale) }} kcal</span>
           </li>
         </ul>
         <p v-else class="text-xs text-slate-400">
-          {{ formatKcal(entry.calories, locale) }} kcal
+          {{ amountText(entry) }}{{ formatKcal(entry.calories, locale) }} kcal
         </p>
       </div>
 

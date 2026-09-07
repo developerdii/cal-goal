@@ -6,6 +6,8 @@ grow into API-based automatic calorie calculation and a real database backend.
 ## Features
 
 - **Daily tracking** — add, edit, and delete entries per day (single foods or grouped meals)
+- **Foods library** — save foods/groups as favorites and quick-add them later
+- **Per-unit calories** — log by amount (e.g. "100 g = 110 kcal") and enter a quantity to auto-calculate
 - **Weekly navigation** — move between days and weeks (Mon–Sun)
 - **Over/under indicator** — see how far each day is from the goal
 - **Weekly analysis** — total surplus/deficit + estimated weight change (7,000 kcal ≈ 1 kg); future days are disabled and excluded from the balance
@@ -47,18 +49,23 @@ A single versioned `localStorage` key `calgoal`:
 
 ```jsonc
 {
-  "version": 1,
+  "version": 2,
   "days": {
     "2026-09-07": {
       "date": "2026-09-07",
       "entries": [
         { "id": "uuid", "type": "item", "name": "Banana", "calories": 105, "createdAt": "ISO-8601" },
-        { "id": "uuid", "type": "group", "name": "Breakfast", "items": [{ "id": "uuid", "name": "Oats", "calories": 300 }], "createdAt": "ISO-8601" }
+        { "id": "uuid", "type": "item", "name": "Chicken", "calories": 275, "unit": "g", "amount": 100, "perKcal": 110, "quantity": 250 },
+        { "id": "uuid", "type": "group", "name": "Breakfast", "items": [{ "id": "uuid", "name": "Oats", "calories": 300 }] }
       ]
     }
   },
   "settings": { "calorieGoal": 2000, "currentWeight": 70 },
-  "prefs": { "locale": "en", "theme": "light" }
+  "prefs": { "locale": "en", "theme": "light" },
+  "foods": [
+    { "id": "uuid", "type": "food", "name": "Chicken", "unit": "g", "amount": 100, "perKcal": 110 },
+    { "id": "uuid", "type": "food", "name": "Banana", "calories": 105 }
+  ]
 }
 ```
 

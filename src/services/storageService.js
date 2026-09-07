@@ -33,10 +33,11 @@ function defaultLocale() {
 
 function createDefaultData() {
   return {
-    version: 1,
+    version: 2,
     days: {},
     settings: { ...DEFAULT_SETTINGS },
     prefs: { locale: defaultLocale(), theme: systemTheme() },
+    foods: [],
   }
 }
 
@@ -54,7 +55,7 @@ function loadData() {
 
     const parsed = JSON.parse(raw)
     data = {
-      version: 1,
+      version: 2,
       days: parsed.days && typeof parsed.days === 'object' ? parsed.days : {},
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings || {}) },
       prefs: {
@@ -62,6 +63,7 @@ function loadData() {
         theme: systemTheme(),
         ...(parsed.prefs || {}),
       },
+      foods: Array.isArray(parsed.foods) ? parsed.foods : [],
     }
   } catch {
     data = createDefaultData()
@@ -116,6 +118,25 @@ export const storageService = {
   savePrefs(prefs) {
     const data = loadData()
     data.prefs = { ...data.prefs, ...prefs }
+    saveData(data)
+  },
+
+  // ---- Foods (favorites library) ----
+  getFoods() {
+    return clone(loadData().foods)
+  },
+  saveFood(food) {
+    const data = loadData()
+    const foods = Array.isArray(data.foods) ? data.foods : []
+    const idx = foods.findIndex((f) => f.id === food.id)
+    if (idx >= 0) foods[idx] = clone(food)
+    else foods.push(clone(food))
+    data.foods = foods
+    saveData(data)
+  },
+  removeFood(id) {
+    const data = loadData()
+    data.foods = (Array.isArray(data.foods) ? data.foods : []).filter((f) => f.id !== id)
     saveData(data)
   },
 

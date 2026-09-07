@@ -6,7 +6,8 @@
   "nav": {
     "home": "Home",
     "week": "Week",
-    "settings": "Settings"
+    "settings": "Settings",
+    "foods": "Foods"
   },
   "common": {
     "today": "Today",
@@ -84,5 +85,47 @@
     "resetTitle": "Reset all data",
     "resetConfirmMessage": "This will delete all entries and restore the default goal and weight. This action cannot be undone.",
     "resetAction": "Reset"
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "piece": "piece",
+    "serving": "serving",
+    "bowl": "bowl",
+    "slice": "slice",
+    "spoon": "spoon",
+    "glass": "glass"
+  },
+  "form": {
+    "modeKcal": "Calories",
+    "modeAmount": "Amount",
+    "unit": "Unit",
+    "amount": "Reference amount",
+    "perKcal": "Calories per amount",
+    "quantity": "Quantity",
+    "total": "Total",
+    "saveToFoods": "Save to my foods",
+    "validation": {
+      "amountRequired": "Please enter an amount.",
+      "amountPositive": "Amount must be greater than zero.",
+      "perKcalRequired": "Please enter calories.",
+      "perKcalPositive": "Calories must be greater than zero.",
+      "quantityRequired": "Please enter a quantity.",
+      "quantityPositive": "Quantity must be greater than zero."
+    }
+  },
+  "foods": {
+    "heading": "Saved foods",
+    "addFood": "Add food",
+    "addGroup": "Add group",
+    "addFoodTitle": "Add food",
+    "editFoodTitle": "Edit food",
+    "addGroupTitle": "Add group",
+    "editGroupTitle": "Edit group",
+    "itemCount": "items",
+    "emptyTitle": "No saved foods yet",
+    "emptyHint": "Add foods here, or save them while logging an entry.",
+    "deleteTitle": "Delete food",
+    "deleteConfirm": "Are you sure you want to delete this saved food?"
   }
 }

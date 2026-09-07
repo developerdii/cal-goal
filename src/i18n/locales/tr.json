@@ -6,7 +6,8 @@
   "nav": {
     "home": "Ana Sayfa",
     "week": "Hafta",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "foods": "Besinler"
   },
   "common": {
     "today": "Bugün",
@@ -84,5 +85,47 @@
     "resetTitle": "Tüm verileri sıfırla",
     "resetConfirmMessage": "Tüm kayıtlar silinecek ve hedef ile kilo varsayılan değerlere dönecek. Bu işlem geri alınamaz.",
     "resetAction": "Sıfırla"
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "piece": "adet",
+    "serving": "servis",
+    "bowl": "kase",
+    "slice": "dilim",
+    "spoon": "kaşık",
+    "glass": "bardak"
+  },
+  "form": {
+    "modeKcal": "Kalori",
+    "modeAmount": "Miktar",
+    "unit": "Birim",
+    "amount": "Referans miktar",
+    "perKcal": "Bu miktarın kalorisi",
+    "quantity": "Tüketilen miktar",
+    "total": "Toplam",
+    "saveToFoods": "Besinlerime kaydet",
+    "validation": {
+      "amountRequired": "Lütfen bir miktar girin.",
+      "amountPositive": "Miktar sıfırdan büyük olmalıdır.",
+      "perKcalRequired": "Lütfen kalori girin.",
+      "perKcalPositive": "Kalori sıfırdan büyük olmalıdır.",
+      "quantityRequired": "Lütfen bir miktar girin.",
+      "quantityPositive": "Miktar sıfırdan büyük olmalıdır."
+    }
+  },
+  "foods": {
+    "heading": "Kayıtlı besinler",
+    "addFood": "Besin ekle",
+    "addGroup": "Grup ekle",
+    "addFoodTitle": "Besin ekle",
+    "editFoodTitle": "Besni düzenle",
+    "addGroupTitle": "Grup ekle",
+    "editGroupTitle": "Grubu düzenle",
+    "itemCount": "öğe",
+    "emptyTitle": "Henüz kayıtlı besin yok",
+    "emptyHint": "Buradan besin ekleyin veya kayıt girerken kaydedin.",
+    "deleteTitle": "Besin sil",
+    "deleteConfirm": "Bu kayıtlı besin silinsin mi?"
   }
 }

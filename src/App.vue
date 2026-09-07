@@ -6,6 +6,7 @@ import AppBottomNav from '@/components/layout/AppBottomNav.vue'
 import { useAppStore } from '@/stores/appStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useDiaryStore } from '@/stores/diaryStore'
+import { useFoodsStore } from '@/stores/foodsStore'
 import { applyTheme } from '@/composables/useTheme'
 
 const { locale } = useI18n()
@@ -13,11 +14,13 @@ const { locale } = useI18n()
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const diaryStore = useDiaryStore()
+const foodsStore = useFoodsStore()
 
 // Load persisted state once at startup.
 appStore.init()
 settingsStore.init()
 diaryStore.init()
+foodsStore.init()
 
 // Apply initial prefs.
 locale.value = appStore.locale
