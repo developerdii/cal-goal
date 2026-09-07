@@ -10,7 +10,7 @@ const { t } = useI18n()
   <header
     class="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
   >
-    <div class="mx-auto flex w-full max-w-lg items-center justify-between gap-3 px-4 py-3">
+    <div class="flex w-full items-center justify-between gap-3 px-4 py-3">
       <div class="flex min-w-0 items-center gap-2.5">
         <span class="text-2xl leading-none">🔥</span>
         <div class="min-w-0">
