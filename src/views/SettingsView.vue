@@ -1,15 +1,18 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useDiaryStore } from '@/stores/diaryStore'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import { formatKcal } from '@/utils/format'
 
 const settings = useSettingsStore()
 const diary = useDiaryStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-const goalInput = ref(String(settings.calorieGoal))
+const maintenanceInput = ref(String(settings.maintenanceCalories))
+const goalTypeInput = ref(settings.goalType)
+const goalAmountInput = ref(String(settings.goalAmount))
 const weightInput = ref(String(settings.currentWeight))
 const saved = ref(false)
 const resetOpen = ref(false)
@@ -17,26 +20,45 @@ const resetOpen = ref(false)
 let savedTimer = null
 
 watch(
-  () => settings.calorieGoal,
-  (v) => {
-    goalInput.value = String(v)
-  },
+  () => settings.maintenanceCalories,
+  (v) => { maintenanceInput.value = String(v) },
+)
+watch(
+  () => settings.goalType,
+  (v) => { goalTypeInput.value = v },
+)
+watch(
+  () => settings.goalAmount,
+  (v) => { goalAmountInput.value = String(v) },
 )
 watch(
   () => settings.currentWeight,
-  (v) => {
-    weightInput.value = String(v)
-  },
+  (v) => { weightInput.value = String(v) },
 )
 
+const dailyTargetPreview = computed(() => {
+  const m = Number(maintenanceInput.value) || 0
+  const a = Number(goalAmountInput.value) || 0
+  if (goalTypeInput.value === 'deficit') return Math.max(0, m - a)
+  if (goalTypeInput.value === 'surplus') return m + a
+  return m
+})
+
 function save() {
-  const goal = Number(goalInput.value)
-  const weight = Number(weightInput.value)
+  const m = Number(maintenanceInput.value)
+  if (Number.isFinite(m) && m > 0) settings.setMaintenanceCalories(m)
 
-  if (Number.isFinite(goal) && goal > 0) settings.setCalorieGoal(goal)
-  if (Number.isFinite(weight) && weight >= 0) settings.setCurrentWeight(weight)
+  settings.setGoalType(goalTypeInput.value)
 
-  goalInput.value = String(settings.calorieGoal)
+  const a = Number(goalAmountInput.value)
+  if (Number.isFinite(a) && a >= 0) settings.setGoalAmount(a)
+
+  const w = Number(weightInput.value)
+  if (Number.isFinite(w) && w >= 0) settings.setCurrentWeight(w)
+
+  maintenanceInput.value = String(settings.maintenanceCalories)
+  goalTypeInput.value = settings.goalType
+  goalAmountInput.value = String(settings.goalAmount)
   weightInput.value = String(settings.currentWeight)
 
   saved.value = true
@@ -48,30 +70,97 @@ function confirmReset() {
   settings.reset()
   diary.reset()
   resetOpen.value = false
-  goalInput.value = String(settings.calorieGoal)
+  maintenanceInput.value = String(settings.maintenanceCalories)
+  goalTypeInput.value = settings.goalType
+  goalAmountInput.value = String(settings.goalAmount)
   weightInput.value = String(settings.currentWeight)
 }
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-700 dark:bg-slate-800'
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 </script>
 
 <template>
   <div class="space-y-4">
     <h2 class="text-lg font-bold">{{ t('settings.heading') }}</h2>
 
-    <form class="space-y-5" @submit.prevent="save">
+    <form class="space-y-4" @submit.prevent="save">
       <div
         class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
       >
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('settings.goalLabel') }}
+          {{ t('settings.maintenanceLabel') }}
         </label>
         <div class="flex items-center gap-2">
-          <input v-model="goalInput" type="number" inputmode="numeric" min="1" step="10" :class="inputClass" />
+          <input
+            v-model="maintenanceInput"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            step="10"
+            :class="inputClass"
+          />
           <span class="shrink-0 text-sm text-slate-500 dark:text-slate-400">kcal</span>
         </div>
-        <p class="mt-2 text-xs text-slate-400">{{ t('settings.goalHint') }}</p>
+        <p class="mt-2 text-xs text-slate-400">{{ t('settings.maintenanceHint') }}</p>
+      </div>
+
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+      >
+        <label class="mb-2 block text-sm font-medium text-slate-600 dark:text-slate-300">
+          {{ t('settings.goalTypeLabel') }}
+        </label>
+        <div class="flex overflow-hidden rounded-lg border border-slate-300 text-xs dark:border-slate-700">
+          <button
+            type="button"
+            class="flex-1 px-2 py-2 font-medium transition-colors"
+            :class="goalTypeInput === 'maintain' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
+            @click="goalTypeInput = 'maintain'"
+          >
+            {{ t('settings.goalTypeMaintain') }}
+          </button>
+          <button
+            type="button"
+            class="flex-1 px-2 py-2 font-medium transition-colors"
+            :class="goalTypeInput === 'deficit' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
+            @click="goalTypeInput = 'deficit'"
+          >
+            {{ t('settings.goalTypeDeficit') }}
+          </button>
+          <button
+            type="button"
+            class="flex-1 px-2 py-2 font-medium transition-colors"
+            :class="goalTypeInput === 'surplus' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
+            @click="goalTypeInput = 'surplus'"
+          >
+            {{ t('settings.goalTypeSurplus') }}
+          </button>
+        </div>
+
+        <div v-if="goalTypeInput !== 'maintain'" class="mt-3">
+          <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
+            {{ goalTypeInput === 'deficit' ? t('settings.deficitLabel') : t('settings.surplusLabel') }}
+          </label>
+          <div class="flex items-center gap-2">
+            <input
+              v-model="goalAmountInput"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="10"
+              :class="inputClass"
+            />
+            <span class="shrink-0 text-sm text-slate-500 dark:text-slate-400">kcal</span>
+          </div>
+        </div>
+
+        <div class="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm dark:bg-slate-800/50">
+          <span class="text-slate-500 dark:text-slate-400">{{ t('settings.dailyTargetLabel') }}:</span>
+          <span class="ml-1 font-semibold text-slate-700 dark:text-slate-200">
+            {{ formatKcal(dailyTargetPreview, locale) }} kcal
+          </span>
+        </div>
       </div>
 
       <div

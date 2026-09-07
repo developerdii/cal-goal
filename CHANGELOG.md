@@ -26,6 +26,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
   subtler input focus.
 - **"Add Food" modal updated to match**: sticky footer with a grouped "Save to foods"
   card, subtler input focus, and a labeled kcal/amount mode toggle.
+- **Calorie goal redesigned**: replaced the single raw "goal" number with an explicit
+  "maintenance calories" input + goal type (maintain / deficit / surplus) + a kcal/day
+  amount. The daily target is now calculated, and weekly weight projection uses actual
+  intake vs. maintenance (7,000 kcal ≈ 1 kg). Old single-goal data is migrated
+  automatically (treated as maintenance with "maintain" goal).
 
 ### Fixed
 - Weekly analysis now shows a clean "no entries" empty state (and hides the summary

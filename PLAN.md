@@ -79,6 +79,13 @@ real database backend.
 - [x] Sticky modal footer (BaseModal footer slot + scrollable body)
 - [x] "Save to foods" as a grouped card; subtler empty-item styling; tighter spacing
 
+### M11 — Explicit deficit/surplus goal logic ✅
+- [x] Settings: maintenance calories + goal type (maintain/deficit/surplus) + kcal/day amount
+- [x] `settingsStore`: computed `dailyTarget` + migration from old single `calorieGoal`
+- [x] Home / DaySummary use the calculated daily target
+- [x] Weekly: balance vs daily target; weight projection vs maintenance (7000 kcal ≈ 1 kg)
+- [x] i18n (TR/EN), tests, docs
+
 ## Folder / File Structure
 
 ```
@@ -135,7 +142,7 @@ Single versioned key `calgoal`:
 
 ```jsonc
 {
-  "version": 2,
+  "version": 3,
   "days": {
     "2026-09-07": {                    // local date key YYYY-MM-DD
       "date": "2026-09-07",
@@ -149,7 +156,9 @@ Single versioned key `calgoal`:
     }
   },
   "settings": {
-    "calorieGoal": 2000,               // editable, future: computed from user data
+    "maintenanceCalories": 2000,       // baseline; daily target is derived from goal type
+    "goalType": "maintain",            // 'maintain' | 'deficit' | 'surplus'
+    "goalAmount": 0,                   // kcal/day (deficit/surplus only)
     "currentWeight": 70                // kg
   },
   "prefs": {
@@ -198,6 +207,7 @@ Single versioned key `calgoal`:
 - [x] Weekly analysis: weeks with no entries (past/current/future) show a clean "no entries" state
 - [x] Foods library (favorites): save / quick-add / manage + per-unit calorie entry (grams, servings…)
 - [x] "Add Group" modal redesign (live total, compact rows, labeled mode toggle, sticky footer); "Add Food" modal aligned to match
+- [x] Explicit deficit/surplus goal: maintenance calories + goal type + kcal/day → calculated daily target & weekly projection
 
 ## Change Log (recent)
 

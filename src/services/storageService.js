@@ -7,7 +7,12 @@
 
 const STORAGE_KEY = 'calgoal'
 
-const DEFAULT_SETTINGS = { calorieGoal: 2000, currentWeight: 70 }
+const DEFAULT_SETTINGS = {
+  maintenanceCalories: 2000,
+  goalType: 'maintain', // 'maintain' | 'deficit' | 'surplus'
+  goalAmount: 0, // kcal/day for deficit/surplus
+  currentWeight: 70,
+}
 
 function systemTheme() {
   if (
@@ -33,7 +38,7 @@ function defaultLocale() {
 
 function createDefaultData() {
   return {
-    version: 2,
+    version: 3,
     days: {},
     settings: { ...DEFAULT_SETTINGS },
     prefs: { locale: defaultLocale(), theme: systemTheme() },
@@ -54,10 +59,20 @@ function loadData() {
     if (!raw) return createDefaultData()
 
     const parsed = JSON.parse(raw)
+
+    // Settings with migration from the old single `calorieGoal` field.
+    const rawSettings = parsed.settings || {}
+    const settings = { ...DEFAULT_SETTINGS, ...rawSettings }
+    if (rawSettings.maintenanceCalories == null && rawSettings.calorieGoal != null) {
+      settings.maintenanceCalories = rawSettings.calorieGoal
+      settings.goalType = 'maintain'
+      settings.goalAmount = 0
+    }
+
     data = {
-      version: 2,
+      version: 3,
       days: parsed.days && typeof parsed.days === 'object' ? parsed.days : {},
-      settings: { ...DEFAULT_SETTINGS, ...(parsed.settings || {}) },
+      settings,
       prefs: {
         locale: defaultLocale(),
         theme: systemTheme(),

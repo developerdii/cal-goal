@@ -49,7 +49,7 @@ A single versioned `localStorage` key `calgoal`:
 
 ```jsonc
 {
-  "version": 2,
+  "version": 3,
   "days": {
     "2026-09-07": {
       "date": "2026-09-07",
@@ -60,7 +60,7 @@ A single versioned `localStorage` key `calgoal`:
       ]
     }
   },
-  "settings": { "calorieGoal": 2000, "currentWeight": 70 },
+  "settings": { "maintenanceCalories": 2000, "goalType": "maintain", "goalAmount": 0, "currentWeight": 70 },
   "prefs": { "locale": "en", "theme": "light" },
   "foods": [
     { "id": "uuid", "type": "food", "name": "Chicken", "unit": "g", "amount": 100, "perKcal": 110 },

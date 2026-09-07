@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useDiaryStore } from '@/stores/diaryStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { addDays, startOfDay } from '@/utils/date'
-import { buildWeekRows, realizedBalance } from '@/utils/analysis'
+import { buildWeekRows, realizedBalance, projectedWeightChange } from '@/utils/analysis'
 import {
   formatKcal,
   formatSignedKcal,
@@ -21,11 +21,13 @@ const { t, locale } = useI18n()
 const anchor = ref(startOfDay(new Date()))
 
 const rows = computed(() =>
-  buildWeekRows((key) => diary.totalForDay(key), settings.calorieGoal, anchor.value),
+  buildWeekRows((key) => diary.totalForDay(key), settings.dailyTarget, anchor.value),
 )
 
 const totalBalance = computed(() => realizedBalance(rows.value))
-const weightChange = computed(() => totalBalance.value / 7000)
+const weightChange = computed(() =>
+  projectedWeightChange(rows.value, settings.maintenanceCalories),
+)
 const anyData = computed(() => rows.value.some((r) => r.consumed > 0))
 
 const weekLabel = computed(() => {

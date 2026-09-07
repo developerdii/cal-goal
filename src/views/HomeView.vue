@@ -35,7 +35,7 @@ const selectedDate = computed(() => parseDateKey(selectedKey.value))
 const weekDays = computed(() => getWeekDays(selectedDate.value))
 const entries = computed(() => diary.getEntries(selectedKey.value))
 const consumed = computed(() => diary.totalForDay(selectedKey.value))
-const goal = computed(() => settings.calorieGoal)
+const goal = computed(() => settings.dailyTarget)
 const isToday = computed(() => selectedKey.value === todayKey)
 
 const dayLabel = computed(() => formatDayLong(selectedDate.value, locale.value))

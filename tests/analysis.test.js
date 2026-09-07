@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dailyBalance, weeklySummary, buildWeekRows, realizedBalance } from '@/utils/analysis'
+import { dailyBalance, buildWeekRows, realizedBalance, projectedWeightChange } from '@/utils/analysis'
 
 describe('analysis utils', () => {
   it('computes daily balance as consumed - goal', () => {
@@ -8,24 +8,24 @@ describe('analysis utils', () => {
     expect(dailyBalance(2000, 2000)).toBe(0)
   })
 
-  it('sums the weekly balance across 7 days', () => {
-    const days = [
-      { consumed: 1700 },
-      { consumed: 1700 },
-      { consumed: 1700 },
-      { consumed: 1700 },
-      { consumed: 1700 },
-      { consumed: 1700 },
-      { consumed: 1700 },
-    ]
-    // 7 * (1700 - 2000) = 7 * -300 = -2100
-    expect(weeklySummary(days, 2000).totalBalance).toBe(-2100)
+  it('projects weekly weight loss from actual intake vs maintenance', () => {
+    // 500 kcal/day deficit vs 2000 maintenance, hit every day → -500*7/7000 = -0.5 kg
+    const anchor = new Date(2026, 8, 7)
+    const rows = buildWeekRows(() => 1500, 1500, anchor, '2026-09-13')
+    expect(projectedWeightChange(rows, 2000)).toBe(-0.5)
   })
 
-  it('estimates weight change using 7000 kcal = 1 kg', () => {
-    expect(weeklySummary([{ consumed: 1300 }], 2000).estimatedWeightChange).toBe(-0.1)
-    expect(weeklySummary([{ consumed: 9000 }], 2000).estimatedWeightChange).toBe(1)
-    expect(weeklySummary([{ consumed: 2000 }], 2000).estimatedWeightChange).toBe(0)
+  it('projects no weight change when eating at maintenance', () => {
+    const anchor = new Date(2026, 8, 7)
+    const rows = buildWeekRows(() => 2000, 1500, anchor, '2026-09-13')
+    expect(projectedWeightChange(rows, 2000)).toBe(0)
+  })
+
+  it('excludes future days from weight projection', () => {
+    const anchor = new Date(2026, 8, 7)
+    const totals = { '2026-09-07': 1500 }
+    const rows = buildWeekRows((key) => totals[key] ?? 0, 1500, anchor, '2026-09-07')
+    expect(projectedWeightChange(rows, 2000)).toBeCloseTo(-500 / 7000)
   })
 
   it('builds 7 week rows keyed by date', () => {
