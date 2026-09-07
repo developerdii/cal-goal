@@ -4,8 +4,8 @@ import { useAppStore } from '@/stores/appStore'
 const appStore = useAppStore()
 
 const locales = [
-  { code: 'tr', label: 'TR' },
-  { code: 'en', label: 'EN' },
+  { code: 'tr', label: 'TR', flag: '🇹🇷' },
+  { code: 'en', label: 'EN', flag: '🇬🇧' },
 ]
 </script>
 
@@ -25,7 +25,7 @@ const locales = [
       "
       @click="appStore.setLocale(l.code)"
     >
-      {{ l.label }}
+      <span class="mr-0.5">{{ l.flag }}</span>{{ l.label }}
     </button>
   </div>
 </template>
