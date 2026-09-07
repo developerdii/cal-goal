@@ -12,6 +12,9 @@ project adheres to [Semantic Versioning](https://semver.org/).
   quick-add them from the add screen, and manage them on a new "Foods" tab.
 - **Per-unit calories**: log foods by amount (e.g. "100 g = 110 kcal") and enter a
   quantity (e.g. 250 g) to auto-calculate calories — for single foods and group items.
+- **Saved-foods picker in add flow**: "Add food"/"Add group" show the last 5 saved
+  items (foods vs. groups respectively) with quick-add (+) and "fill form" (edit)
+  actions; each group item can also be filled from saved foods.
 
 ### Changed
 - Rebranded the application from **"Calorie Counter"** to **"CalGoal"**:

@@ -125,6 +125,7 @@
   },
   "foods": {
     "heading": "Saved foods",
+    "quickAdd": "Quick add",
     "addFood": "Add food",
     "addGroup": "Add group",
     "addFoodTitle": "Add food",

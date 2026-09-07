@@ -5,6 +5,8 @@ import BaseModal from '@/components/ui/BaseModal.vue'
 import { UNIT_CODES, DEFAULT_UNIT } from '@/utils/units'
 import { resolveKcal } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
+import { useFoodsStore } from '@/stores/foodsStore'
+import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -13,11 +15,13 @@ const props = defineProps({
   context: { type: String, default: 'log' }, // 'log' | 'library'
 })
 
-const emit = defineEmits(['close', 'save', 'delete'])
+const emit = defineEmits(['close', 'save', 'delete', 'quickAdd'])
 
 const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
+const foodsStore = useFoodsStore()
+const savedFoods = computed(() => foodsStore.recent('food', 5))
 
 const form = reactive({
   name: '',
@@ -83,6 +87,24 @@ function clearErrors() {
   errors.amount = ''
   errors.perKcal = ''
   errors.quantity = ''
+}
+
+function fillFromSaved(food) {
+  form.name = food.name
+  if (food.unit) {
+    form.mode = 'amount'
+    form.unit = food.unit
+    form.amount = food.amount != null ? String(food.amount) : ''
+    form.perKcal = food.perKcal != null ? String(food.perKcal) : ''
+    form.quantity = String(food.amount ?? '')
+  } else {
+    form.mode = 'kcal'
+    form.calories = food.calories != null ? String(food.calories) : ''
+  }
+}
+
+function onQuickAdd(food) {
+  emit('quickAdd', food)
 }
 
 function validate() {
@@ -180,6 +202,13 @@ const inputClass =
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <form id="food-form" class="space-y-3" @submit.prevent="submit">
+      <div v-if="!isLibrary && !entry && savedFoods.length">
+        <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          {{ t('foods.heading') }}
+        </p>
+        <SavedFoodsPicker :items="savedFoods" @quickAdd="onQuickAdd" @fill="fillFromSaved" />
+      </div>
+
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
           {{ t('entry.name') }}

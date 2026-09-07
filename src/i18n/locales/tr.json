@@ -125,6 +125,7 @@
   },
   "foods": {
     "heading": "Kayıtlı besinler",
+    "quickAdd": "Hızlı ekle",
     "addFood": "Besin ekle",
     "addGroup": "Grup ekle",
     "addFoodTitle": "Besin ekle",

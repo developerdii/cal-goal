@@ -4,8 +4,9 @@ import { storageService } from '@/services/storageService'
 import { createId } from '@/utils/id'
 
 // Library of saved foods/groups ("favorites"). Each food stores a definition:
-//   - food:  { id, type: 'food',  name, unit, amount, kcal, createdAt }
-//   - group: { id, type: 'group', name, items: [{ id, name, unit, amount, kcal }], createdAt }
+//   - food (direct):   { id, type: 'food', name, calories }
+//   - food (measured): { id, type: 'food', name, unit, amount, perKcal }
+//   - group:           { id, type: 'group', name, items: [...] }
 export const useFoodsStore = defineStore('foods', () => {
   const foods = ref([])
 
@@ -49,5 +50,13 @@ export const useFoodsStore = defineStore('foods', () => {
     storageService.removeFood(id)
   }
 
-  return { foods, init, getById, upsert, remove }
+  // Most recent N items of a type (most recent first).
+  function recent(type, limit = 5) {
+    return foods.value
+      .filter((f) => f.type === type)
+      .slice(-limit)
+      .reverse()
+  }
+
+  return { foods, init, getById, upsert, remove, recent }
 })

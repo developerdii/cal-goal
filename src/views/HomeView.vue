@@ -6,7 +6,6 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { useFoodsStore } from '@/stores/foodsStore'
 import { toDateKey, parseDateKey, addDays, getWeekDays } from '@/utils/date'
 import { formatDayLong, formatKcal } from '@/utils/format'
-import { resolveKcal } from '@/utils/nutrition'
 import { createId } from '@/utils/id'
 import WeekStrip from '@/components/diary/WeekStrip.vue'
 import DaySummary from '@/components/diary/DaySummary.vue'
@@ -106,19 +105,19 @@ function onSaveGroup(payload) {
   groupOpen.value = false
 }
 
-function onQuickAddFood(food, quantity) {
-  if (food.unit && (!quantity || quantity <= 0)) return
+function onQuickAddFood(food) {
   const measured = !!food.unit
+  const quantity = measured ? food.amount : null
   diary.addEntry(selectedKey.value, {
     name: food.name,
-    calories: measured ? resolveKcal(food.amount, food.perKcal, quantity) : Number(food.calories),
-    quantity: measured ? quantity : null,
+    calories: measured ? Number(food.perKcal) : Number(food.calories),
+    quantity,
     unit: food.unit ?? null,
     amount: measured ? food.amount : null,
     perKcal: measured ? food.perKcal : null,
     foodId: food.id,
   })
-  chooserOpen.value = false
+  foodOpen.value = false
 }
 
 function onQuickAddGroup(food) {
@@ -138,7 +137,7 @@ function onQuickAddGroup(food) {
     }),
     foodId: food.id,
   })
-  chooserOpen.value = false
+  groupOpen.value = false
 }
 function onDeleteFromModal() {
   if (editingEntry.value) diary.removeEntry(selectedKey.value, editingEntry.value.id)
@@ -212,8 +211,6 @@ const arrowClass =
       :open="chooserOpen"
       @close="chooserOpen = false"
       @select="onChooserSelect"
-      @quickAddFood="onQuickAddFood"
-      @quickAddGroup="onQuickAddGroup"
     />
 
     <EntryFormModal
@@ -222,6 +219,7 @@ const arrowClass =
       @close="foodOpen = false"
       @save="onSaveFood"
       @delete="onDeleteFromModal"
+      @quickAdd="onQuickAddFood"
     />
 
     <GroupFormModal
@@ -230,6 +228,7 @@ const arrowClass =
       @close="groupOpen = false"
       @save="onSaveGroup"
       @delete="onDeleteFromModal"
+      @quickAddGroup="onQuickAddGroup"
     />
 
     <ConfirmDialog

@@ -7,6 +7,8 @@ import { UNIT_CODES, DEFAULT_UNIT } from '@/utils/units'
 import { resolveKcal } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
+import { useFoodsStore } from '@/stores/foodsStore'
+import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -15,11 +17,15 @@ const props = defineProps({
   context: { type: String, default: 'log' }, // 'log' | 'library'
 })
 
-const emit = defineEmits(['close', 'save', 'delete'])
+const emit = defineEmits(['close', 'save', 'delete', 'quickAddGroup'])
 
 const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
+const foodsStore = useFoodsStore()
+const savedGroups = computed(() => foodsStore.recent('group', 5))
+const savedFoods = computed(() => foodsStore.recent('food', 5))
+const pickerFor = ref(null) // id of the item whose saved-foods picker is open
 
 const form = reactive({ name: '', items: [] })
 const saveToFoods = ref(false)
@@ -89,6 +95,35 @@ function addItem() {
 function removeItem(id) {
   form.items = form.items.filter((it) => it.id !== id)
   if (form.items.length === 0) form.items.push(emptyItem())
+}
+
+function fillFromSavedGroup(food) {
+  form.name = food.name
+  form.items = (food.items || []).map(fromSource)
+  if (form.items.length === 0) form.items.push(emptyItem())
+}
+
+function fillItemFromSaved(it, food) {
+  it.name = food.name
+  if (food.unit) {
+    it.mode = 'amount'
+    it.unit = food.unit
+    it.amount = food.amount != null ? String(food.amount) : ''
+    it.perKcal = food.perKcal != null ? String(food.perKcal) : ''
+    it.quantity = String(food.amount ?? '')
+  } else {
+    it.mode = 'kcal'
+    it.calories = food.calories != null ? String(food.calories) : ''
+  }
+  pickerFor.value = null
+}
+
+function togglePicker(id) {
+  pickerFor.value = pickerFor.value === id ? null : id
+}
+
+function onQuickAddGroup(food) {
+  emit('quickAddGroup', food)
 }
 
 function itemTotal(it) {
@@ -202,6 +237,13 @@ const compactInputClass =
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <form id="group-form" class="space-y-3" @submit.prevent="submit">
+      <div v-if="!isLibrary && !group && savedGroups.length">
+        <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          {{ t('foods.heading') }}
+        </p>
+        <SavedFoodsPicker :items="savedGroups" @quickAdd="onQuickAddGroup" @fill="fillFromSavedGroup" />
+      </div>
+
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
           {{ t('group.name') }}
@@ -266,6 +308,15 @@ const compactInputClass =
               </div>
               <button
                 type="button"
+                :title="t('foods.heading')"
+                :aria-label="t('foods.heading')"
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600 dark:hover:bg-slate-800 dark:hover:text-emerald-400"
+                @click="togglePicker(it.id)"
+              >
+                <Icon name="star" class="h-4 w-4" />
+              </button>
+              <button
+                type="button"
                 class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
                 aria-label="Remove item"
                 @click="removeItem(it.id)"
@@ -316,6 +367,10 @@ const compactInputClass =
                   {{ itemTotal(it) }} kcal
                 </span>
               </div>
+            </div>
+
+            <div v-if="pickerFor === it.id" class="mt-1.5 rounded-md bg-slate-50 p-2 dark:bg-slate-800/50">
+              <SavedFoodsPicker :items="savedFoods" fill-only @fill="(food) => fillItemFromSaved(it, food)" />
             </div>
           </div>
         </div>
