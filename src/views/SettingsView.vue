@@ -97,7 +97,7 @@ const inputClass =
             type="number"
             inputmode="numeric"
             min="1"
-            step="10"
+            step="1"
             :class="inputClass"
           />
           <span class="shrink-0 text-sm text-slate-500 dark:text-slate-400">kcal</span>
@@ -148,7 +148,7 @@ const inputClass =
               type="number"
               inputmode="numeric"
               min="0"
-              step="10"
+              step="1"
               :class="inputClass"
             />
             <span class="shrink-0 text-sm text-slate-500 dark:text-slate-400">kcal</span>
