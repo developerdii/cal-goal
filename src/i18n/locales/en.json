@@ -105,6 +105,8 @@
     "quantity": "Quantity",
     "total": "Total",
     "saveToFoods": "Save to my foods",
+    "toAmount": "Measure by amount",
+    "toKcal": "Enter calories directly",
     "validation": {
       "amountRequired": "Please enter an amount.",
       "amountPositive": "Amount must be greater than zero.",

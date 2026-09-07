@@ -105,6 +105,8 @@
     "quantity": "Tüketilen miktar",
     "total": "Toplam",
     "saveToFoods": "Besinlerime kaydet",
+    "toAmount": "Miktara göre ölç",
+    "toKcal": "Direkt kalori gir",
     "validation": {
       "amountRequired": "Lütfen bir miktar girin.",
       "amountPositive": "Miktar sıfırdan büyük olmalıdır.",

@@ -20,6 +20,10 @@ project adheres to [Semantic Versioning](https://semver.org/).
   - **Note:** existing data stored under the old key is not migrated automatically.
 - Header layout updated: logo + name + tagline on the left; TR/EN switcher + theme
   toggle grouped on the right; tagline now hides on small screens to stay responsive.
+- **"Add Group" modal redesigned**: live group total, compact single-line item rows,
+  a small icon mode toggle (scale/bolt) instead of full-width segmented buttons,
+  a sticky footer (BaseModal now supports a footer slot + scrollable body), a grouped
+  "Save to foods" card, and tighter spacing with subtler input focus.
 
 ### Fixed
 - Weekly analysis now shows a clean "no entries" empty state (and hides the summary

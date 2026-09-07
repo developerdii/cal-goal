@@ -28,9 +28,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
       >
         <div class="absolute inset-0 bg-slate-900/50" @click="emit('close')"></div>
         <div
-          class="modal-panel relative w-full max-w-md rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl dark:bg-slate-900 dark:text-slate-100"
+          class="modal-panel relative flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-2xl dark:bg-slate-900 dark:text-slate-100"
         >
-          <div class="mb-4 flex items-center justify-between">
+          <div class="flex shrink-0 items-center justify-between px-5 pt-5 pb-3">
             <h3 class="text-lg font-semibold">{{ title }}</h3>
             <button
               type="button"
@@ -41,7 +41,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
               <Icon name="close" class="h-5 w-5" />
             </button>
           </div>
-          <slot />
+          <div class="min-h-0 flex-1 overflow-y-auto px-5 pb-5">
+            <slot />
+          </div>
+          <div
+            v-if="$slots.footer"
+            class="shrink-0 border-t border-slate-200 px-5 py-3 dark:border-slate-800"
+          >
+            <slot name="footer" />
+          </div>
         </div>
       </div>
     </Transition>

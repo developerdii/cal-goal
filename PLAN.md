@@ -72,6 +72,13 @@ real database backend.
 - [x] "Foods" screen (list + create/edit/delete) + nav tab + route
 - [x] i18n (units, form, foods)
 
+### M10 — "Add Group" modal redesign ✅
+- [x] Live group calorie total in the items header
+- [x] Compact single-line item rows (kcal mode) + clear expanded amount mode
+- [x] Small icon mode toggle (scale/bolt) instead of full-width segmented buttons
+- [x] Sticky modal footer (BaseModal footer slot + scrollable body)
+- [x] "Save to foods" as a grouped card; subtler empty-item styling; tighter spacing
+
 ## Folder / File Structure
 
 ```
@@ -190,6 +197,7 @@ Single versioned key `calgoal`:
 - [x] Header layout: logo + name + tagline (left) · TR/EN + theme toggle (right); tagline hides on mobile
 - [x] Weekly analysis: weeks with no entries (past/current/future) show a clean "no entries" state
 - [x] Foods library (favorites): save / quick-add / manage + per-unit calorie entry (grams, servings…)
+- [x] "Add Group" modal redesign (live total, compact rows, icon mode toggle, sticky footer)
 
 ## Change Log (recent)
 

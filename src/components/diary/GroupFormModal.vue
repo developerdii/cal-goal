@@ -5,6 +5,7 @@ import BaseModal from '@/components/ui/BaseModal.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { UNIT_CODES, DEFAULT_UNIT } from '@/utils/units'
 import { resolveKcal } from '@/utils/nutrition'
+import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
 
 const props = defineProps({
@@ -16,7 +17,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'save', 'delete'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
 
@@ -88,6 +89,26 @@ function addItem() {
 function removeItem(id) {
   form.items = form.items.filter((it) => it.id !== id)
   if (form.items.length === 0) form.items.push(emptyItem())
+}
+
+function toggleMode(it) {
+  it.mode = it.mode === 'kcal' ? 'amount' : 'kcal'
+}
+
+function itemTotal(it) {
+  if (it.mode === 'amount') {
+    return resolveKcal(it.amount, it.perKcal, it.quantity || it.amount)
+  }
+  return Number(it.calories) || 0
+}
+
+const groupTotal = computed(() => form.items.reduce((sum, it) => sum + itemTotal(it), 0))
+
+function refText(it) {
+  if (it.amount && it.perKcal) {
+    return `${it.amount} ${t(`units.${it.unit}`)} = ${it.perKcal} kcal`
+  }
+  return t('form.perKcal')
 }
 
 function isFilled(it) {
@@ -177,12 +198,14 @@ function submit() {
 }
 
 const inputClass =
-  'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-700 dark:bg-slate-800'
+  'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
+const compactInputClass =
+  'rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 </script>
 
 <template>
   <BaseModal :open="open" :title="title" @close="emit('close')">
-    <form class="space-y-4" @submit.prevent="submit">
+    <form id="group-form" class="space-y-3" @submit.prevent="submit">
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
           {{ t('group.name') }}
@@ -198,37 +221,61 @@ const inputClass =
       </div>
 
       <div>
-        <div class="mb-1 flex items-center justify-between">
+        <div class="mb-2 flex items-center justify-between">
           <label class="text-sm font-medium text-slate-600 dark:text-slate-300">
             {{ t('group.items') }}
           </label>
-          <button
-            type="button"
-            class="flex items-center gap-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
-            @click="addItem"
-          >
-            <Icon name="plus" class="h-3.5 w-3.5" />
-            {{ t('group.addItem') }}
-          </button>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              {{ t('form.total') }}: {{ formatKcal(groupTotal, locale) }} kcal
+            </span>
+            <button
+              type="button"
+              class="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-xs font-semibold text-white transition-colors hover:bg-emerald-600"
+              @click="addItem"
+            >
+              <Icon name="plus" class="h-3.5 w-3.5" />
+              {{ t('group.addItem') }}
+            </button>
+          </div>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <div
             v-for="it in form.items"
             :key="it.id"
-            class="space-y-2 rounded-xl border border-slate-200 p-3 dark:border-slate-800"
+            class="rounded-lg border border-slate-200 p-2 dark:border-slate-700"
           >
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
               <input
                 v-model="it.name"
                 type="text"
                 :placeholder="t('entry.namePlaceholder')"
-                class="w-full"
-                :class="inputClass"
+                class="min-w-0 flex-1"
+                :class="compactInputClass"
+              />
+              <input
+                v-if="it.mode === 'kcal'"
+                v-model="it.calories"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                step="1"
+                :placeholder="t('entry.caloriesPlaceholder')"
+                class="w-16 shrink-0 text-right"
+                :class="compactInputClass"
               />
               <button
                 type="button"
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
+                :title="it.mode === 'kcal' ? t('form.toAmount') : t('form.toKcal')"
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                @click="toggleMode(it)"
+              >
+                <Icon :name="it.mode === 'kcal' ? 'scale' : 'bolt'" class="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
                 aria-label="Remove item"
                 @click="removeItem(it.id)"
               >
@@ -236,40 +283,9 @@ const inputClass =
               </button>
             </div>
 
-            <div class="flex overflow-hidden rounded-lg border border-slate-300 text-xs dark:border-slate-700">
-              <button
-                type="button"
-                class="flex-1 px-2 py-1.5 font-medium transition-colors"
-                :class="it.mode === 'kcal' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-                @click="it.mode = 'kcal'"
-              >
-                {{ t('form.modeKcal') }}
-              </button>
-              <button
-                type="button"
-                class="flex-1 px-2 py-1.5 font-medium transition-colors"
-                :class="it.mode === 'amount' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-                @click="it.mode = 'amount'"
-              >
-                {{ t('form.modeAmount') }}
-              </button>
-            </div>
-
-            <input
-              v-if="it.mode === 'kcal'"
-              v-model="it.calories"
-              type="number"
-              inputmode="numeric"
-              min="1"
-              step="1"
-              :placeholder="t('entry.caloriesPlaceholder')"
-              class="w-full"
-              :class="inputClass"
-            />
-
-            <template v-else>
-              <div class="grid grid-cols-3 gap-2">
-                <select v-model="it.unit" :class="inputClass">
+            <div v-if="it.mode === 'amount'" class="mt-1.5 rounded-md bg-slate-50 p-2 dark:bg-slate-800/50">
+              <div class="grid grid-cols-3 gap-1.5">
+                <select v-model="it.unit" :class="compactInputClass">
                   <option v-for="code in UNIT_CODES" :key="code" :value="code">
                     {{ t(`units.${code}`) }}
                   </option>
@@ -281,7 +297,7 @@ const inputClass =
                   min="0.1"
                   step="any"
                   placeholder="100"
-                  :class="inputClass"
+                  :class="compactInputClass"
                 />
                 <input
                   v-model="it.perKcal"
@@ -290,29 +306,36 @@ const inputClass =
                   min="1"
                   step="1"
                   placeholder="110"
-                  :class="inputClass"
+                  :class="compactInputClass"
                 />
               </div>
-              <input
-                v-if="!isLibrary"
-                v-model="it.quantity"
-                type="number"
-                inputmode="decimal"
-                min="0.1"
-                step="any"
-                :placeholder="t('form.quantity')"
-                class="w-full"
-                :class="inputClass"
-              />
-            </template>
+              <p class="mt-1 text-[11px] text-slate-400">{{ refText(it) }}</p>
+              <div v-if="!isLibrary" class="mt-1.5 flex items-center gap-2">
+                <input
+                  v-model="it.quantity"
+                  type="number"
+                  inputmode="decimal"
+                  min="0.1"
+                  step="any"
+                  :placeholder="t('form.quantity')"
+                  class="min-w-0 flex-1"
+                  :class="compactInputClass"
+                />
+                <span class="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">
+                  {{ itemTotal(it) }} kcal
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         <p v-if="errors.items" class="mt-1 text-xs text-rose-500">{{ errors.items }}</p>
       </div>
+    </form>
 
+    <template #footer>
       <label
         v-if="!isLibrary"
-        class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
+        class="flex cursor-pointer items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:bg-slate-800/50 dark:text-slate-300"
       >
         <input
           v-model="saveToFoods"
@@ -321,8 +344,7 @@ const inputClass =
         />
         <span>{{ t('form.saveToFoods') }}</span>
       </label>
-
-      <div class="flex gap-2 pt-1">
+      <div class="flex gap-2 pt-2">
         <button
           v-if="group || food"
           type="button"
@@ -341,11 +363,12 @@ const inputClass =
         </button>
         <button
           type="submit"
+          form="group-form"
           class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
         >
           {{ t('common.save') }}
         </button>
       </div>
-    </form>
+    </template>
   </BaseModal>
 </template>
