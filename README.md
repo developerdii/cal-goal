@@ -1,5 +1,7 @@
 # CalGoal
 
+**🌐 Live app:** [https://developerdii.github.io/cal-goal/](https://developerdii.github.io/cal-goal/)
+
 A web app for tracking daily calorie intake. MVP focused on manual entry, built so it can
 grow into API-based automatic calorie calculation and a real database backend.
 
