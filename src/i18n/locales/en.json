@@ -35,7 +35,8 @@
       "emailNotConfirmed": "Please confirm your email before signing in.",
       "alreadyRegistered": "An account with this email already exists.",
       "weakPassword": "Password is too weak. Use at least 6 characters.",
-      "rateLimit": "Too many attempts. Please try again later."
+      "rateLimit": "Too many attempts. Please try again later.",
+      "signOutFailed": "Sign out failed. Try again."
     }
   },
   "nav": {
@@ -43,6 +44,15 @@
     "week": "Week",
     "settings": "Settings",
     "foods": "Foods"
+  },
+  "menu": {
+    "open": "Open menu",
+    "theme": "Theme",
+    "themeAuto": "Auto",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language",
+    "signingOut": "Signing out…"
   },
   "common": {
     "today": "Today",
@@ -99,6 +109,8 @@
     "name": "Group name",
     "namePlaceholder": "e.g. Breakfast",
     "items": "Items",
+    "itemCountOne": "item",
+    "itemCount": "items",
     "addItem": "Add item",
     "servingHint": "Enter calories directly, or tap the calculator to work them out from a serving size.",
     "totalHint": "0 kcal",
@@ -128,6 +140,7 @@
     "dangerZone": "Danger zone",
     "resetTitle": "Reset all data",
     "resetConfirmMessage": "This will delete all entries and restore the default settings. This action cannot be undone.",
+    "resetTypeToConfirm": "Type RESET to confirm",
     "resetAction": "Reset"
   },
   "units": {

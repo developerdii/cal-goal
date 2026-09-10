@@ -5,6 +5,7 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { useDiaryStore } from '@/stores/diaryStore'
 import { useAuthStore } from '@/stores/authStore'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import { storageService } from '@/services/storageService'
 import { formatKcal } from '@/utils/format'
 
 const settings = useSettingsStore()
@@ -12,8 +13,21 @@ const diary = useDiaryStore()
 const auth = useAuthStore()
 const { t, locale } = useI18n()
 
+const signingOut = ref(false)
+const signOutError = ref('')
+const resetting = ref(false)
+
 async function signOut() {
-  await auth.signOut()
+  if (signingOut.value) return
+  signingOut.value = true
+  signOutError.value = ''
+  try {
+    await auth.signOut()
+  } catch (err) {
+    console.error('authStore: sign out failed', err)
+    signOutError.value = 'auth.errors.signOutFailed'
+    signingOut.value = false
+  }
 }
 
 const maintenanceInput = ref(String(settings.maintenanceCalories))
@@ -72,9 +86,13 @@ function save() {
   savedTimer = setTimeout(() => (saved.value = false), 1500)
 }
 
-function confirmReset() {
+async function confirmReset() {
+  if (resetting.value) return
+  resetting.value = true
   settings.reset()
   diary.reset()
+  await storageService.flush()
+  resetting.value = false
   resetOpen.value = false
   maintenanceInput.value = String(settings.maintenanceCalories)
   goalTypeInput.value = settings.goalType
@@ -103,12 +121,20 @@ const inputClass =
           </div>
           <button
             type="button"
-            class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            :disabled="signingOut"
+            class="flex shrink-0 items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             @click="signOut"
           >
-            {{ t('auth.signOut') }}
+            <span
+              v-if="signingOut"
+              class="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent"
+            ></span>
+            {{ signingOut ? t('menu.signingOut') : t('auth.signOut') }}
           </button>
         </div>
+        <p v-if="signOutError" class="mt-2 text-xs text-rose-600 dark:text-rose-400">
+          {{ t(signOutError) }}
+        </p>
       </template>
       <template v-else>
         <p class="text-sm text-slate-600 dark:text-slate-300">{{ t('auth.guestHint') }}</p>
@@ -264,6 +290,9 @@ const inputClass =
       :title="t('settings.resetTitle')"
       :message="t('settings.resetConfirmMessage')"
       :confirm-label="t('settings.resetAction')"
+      :confirm-word="'RESET'"
+      :confirm-hint="t('settings.resetTypeToConfirm')"
+      :loading="resetting"
       @confirm="confirmReset"
       @cancel="resetOpen = false"
     />

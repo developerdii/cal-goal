@@ -1,19 +1,11 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import LocaleSwitch from '@/components/ui/LocaleSwitch.vue'
-import ThemeToggle from '@/components/ui/ThemeToggle.vue'
+import UserMenu from '@/components/layout/UserMenu.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 const { t } = useI18n()
-const router = useRouter()
 const auth = useAuthStore()
-
-async function signOut() {
-  await auth.signOut()
-  router.replace('/')
-}
 </script>
 
 <template>
@@ -39,24 +31,7 @@ async function signOut() {
           <Icon name="user" class="h-4 w-4" />
           <span class="hidden sm:inline">{{ t('auth.signIn') }}</span>
         </RouterLink>
-        <template v-else>
-          <span
-            class="hidden max-w-[10rem] truncate text-xs text-slate-500 dark:text-slate-400 md:inline"
-          >
-            {{ auth.displayName }}
-          </span>
-          <button
-            type="button"
-            :title="t('auth.signOut')"
-            :aria-label="t('auth.signOut')"
-            class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-            @click="signOut"
-          >
-            <Icon name="logout" class="h-4 w-4" />
-          </button>
-        </template>
-        <LocaleSwitch />
-        <ThemeToggle />
+        <UserMenu />
       </div>
     </div>
   </header>

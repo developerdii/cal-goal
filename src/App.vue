@@ -55,8 +55,18 @@ function onVisibilityChange() {
   if (document.visibilityState === 'hidden') storageService.flush()
 }
 
+let mql = null
+function onSystemThemeChange() {
+  if (appStore.theme === 'auto') applyTheme('auto')
+}
+
 onMounted(async () => {
   document.addEventListener('visibilitychange', onVisibilityChange)
+
+  if (window.matchMedia) {
+    mql = window.matchMedia('(prefers-color-scheme: dark)')
+    mql.addEventListener('change', onSystemThemeChange)
+  }
 
   // Register the auth listener before the initial load so a forced sign-out
   // (e.g. a failed cloud load) is handled consistently from the very start.
@@ -80,6 +90,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   document.removeEventListener('visibilitychange', onVisibilityChange)
+  mql?.removeEventListener('change', onSystemThemeChange)
   unsubscribeAuth?.()
 })
 

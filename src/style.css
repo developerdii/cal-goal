@@ -49,6 +49,17 @@ input[type='number'] {
   opacity: 0;
 }
 
+/* Dropdown menu transition */
+.menu-enter-active,
+.menu-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+  transform: translateY(-0.25rem);
+}
+
 /* Custom checkbox (replaces the native control) */
 @layer components {
   .custom-checkbox {

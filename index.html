@@ -12,10 +12,10 @@
       try {
         var raw = localStorage.getItem('calgoal')
         var prefs = raw ? JSON.parse(raw).prefs : null
-        var theme = prefs && prefs.theme
-          ? prefs.theme
-          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-        if (theme === 'dark') document.documentElement.classList.add('dark')
+        var theme = (prefs && prefs.theme) || 'auto'
+        var dark = theme === 'dark' ||
+          (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        if (dark) document.documentElement.classList.add('dark')
       } catch (e) {}
     </script>
   </head>

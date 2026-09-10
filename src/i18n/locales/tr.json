@@ -35,7 +35,8 @@
       "emailNotConfirmed": "Giriş yapmadan önce e-postanızı onaylayın.",
       "alreadyRegistered": "Bu e-posta ile zaten bir hesap var.",
       "weakPassword": "Şifre çok zayıf. En az 6 karakter kullanın.",
-      "rateLimit": "Çok fazla deneme. Lütfen daha sonra tekrar deneyin."
+      "rateLimit": "Çok fazla deneme. Lütfen daha sonra tekrar deneyin.",
+      "signOutFailed": "Çıkış yapılamadı. Tekrar deneyin."
     }
   },
   "nav": {
@@ -43,6 +44,15 @@
     "week": "Hafta",
     "settings": "Ayarlar",
     "foods": "Besinler"
+  },
+  "menu": {
+    "open": "Menüyü aç",
+    "theme": "Tema",
+    "themeAuto": "Otomatik",
+    "themeLight": "Açık",
+    "themeDark": "Koyu",
+    "language": "Dil",
+    "signingOut": "Çıkış yapılıyor…"
   },
   "common": {
     "today": "Bugün",
@@ -99,6 +109,8 @@
     "name": "Grup adı",
     "namePlaceholder": "örn. Kahvaltı",
     "items": "Öğeler",
+    "itemCountOne": "öğe",
+    "itemCount": "öğe",
     "addItem": "Öğe ekle",
     "servingHint": "Kaloriyi doğrudan girin ya da porsiyon boyutuna göre hesaplamak için hesap makinesine dokunun.",
     "totalHint": "0 kcal",
@@ -128,6 +140,7 @@
     "dangerZone": "Tehlikeli bölge",
     "resetTitle": "Tüm verileri sıfırla",
     "resetConfirmMessage": "Tüm kayıtlar silinecek ve ayarlar varsayılana dönecek. Bu işlem geri alınamaz.",
+    "resetTypeToConfirm": "Onaylamak için RESET yazın",
     "resetAction": "Sıfırla"
   },
   "units": {

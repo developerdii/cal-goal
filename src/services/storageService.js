@@ -24,17 +24,6 @@ const DEFAULT_SETTINGS = {
   currentWeight: 70,
 }
 
-function systemTheme() {
-  if (
-    typeof window !== 'undefined' &&
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  ) {
-    return 'dark'
-  }
-  return 'light'
-}
-
 function defaultLocale() {
   if (
     typeof navigator !== 'undefined' &&
@@ -51,7 +40,7 @@ function createDefaultData() {
     version: 3,
     days: {},
     settings: { ...DEFAULT_SETTINGS },
-    prefs: { locale: defaultLocale(), theme: systemTheme() },
+    prefs: { locale: defaultLocale(), theme: 'auto' },
     foods: [],
   }
 }
@@ -76,7 +65,7 @@ function normalize(parsed) {
     settings,
     prefs: {
       locale: defaultLocale(),
-      theme: systemTheme(),
+      theme: 'auto',
       ...(parsed.prefs || {}),
     },
     foods: Array.isArray(parsed.foods) ? parsed.foods : [],

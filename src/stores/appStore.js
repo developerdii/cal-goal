@@ -4,7 +4,7 @@ import { storageService } from '@/services/storageService'
 
 export const useAppStore = defineStore('app', () => {
   const locale = ref('en')
-  const theme = ref('light') // 'light' | 'dark'
+  const theme = ref('auto') // 'auto' | 'light' | 'dark'
 
   function init() {
     const prefs = storageService.getPrefs()
@@ -22,14 +22,9 @@ export const useAppStore = defineStore('app', () => {
     persistPrefs()
   }
 
-  function toggleTheme() {
-    theme.value = theme.value === 'dark' ? 'light' : 'dark'
-    persistPrefs()
-  }
-
   function persistPrefs() {
     storageService.savePrefs({ locale: locale.value, theme: theme.value })
   }
 
-  return { locale, theme, init, setLocale, setTheme, toggleTheme }
+  return { locale, theme, init, setLocale, setTheme }
 })
