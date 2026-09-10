@@ -187,6 +187,7 @@ const itemCountText = computed(() => {
   const n = filledItems.value.length
   return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')}`
 })
+const footerCountText = computed(() => `${t('form.total')} · ${itemCountText.value}`)
 
 function itemValid(it) {
   if (!it.name.trim()) return false
@@ -379,19 +380,6 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
           </div>
         </div>
 
-        <div class="mt-2 flex items-baseline justify-between gap-2 border-t border-slate-200 pt-2 dark:border-slate-800">
-          <span class="text-sm text-slate-500 dark:text-slate-400">
-            {{ itemCountText }}
-          </span>
-          <span
-            :class="hasUsableTotal
-              ? 'text-base font-medium text-slate-800 dark:text-slate-100'
-              : 'text-sm text-slate-500 dark:text-slate-400'"
-          >
-            {{ hasUsableTotal ? `${formatKcal(groupTotal, locale)} kcal` : t('group.totalHint') }}
-          </span>
-        </div>
-
         <div class="mt-2 flex items-center justify-end gap-1.5">
           <button
             v-if="allFoods.length"
@@ -410,6 +398,19 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
             <Icon name="plus" class="h-3.5 w-3.5" />
             {{ t('group.addItem') }}
           </button>
+        </div>
+
+        <div class="mt-2 flex items-baseline justify-between gap-2 border-t border-slate-200 pt-2 dark:border-slate-800">
+          <span class="text-sm text-slate-500 dark:text-slate-400">
+            {{ footerCountText }}
+          </span>
+          <span
+            :class="hasUsableTotal
+              ? 'text-base font-medium text-slate-800 dark:text-slate-100'
+              : 'text-sm text-slate-500 dark:text-slate-400'"
+          >
+            {{ hasUsableTotal ? `${formatKcal(groupTotal, locale)} kcal` : t('group.totalHint') }}
+          </span>
         </div>
         <p v-if="errors.items" class="mt-1 text-xs text-rose-500">{{ errors.items }}</p>
       </div>

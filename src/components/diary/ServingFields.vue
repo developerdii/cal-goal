@@ -30,7 +30,7 @@ const {
 } = useServingCalc(unit, amount, perKcal, quantity)
 
 const totalText = computed(() =>
-  hasValidTotal.value ? `${formatKcal(total.value, locale)} kcal` : t('form.totalHint'),
+  hasValidTotal.value ? `= ${formatKcal(total.value, locale)} kcal` : t('form.totalHint'),
 )
 
 function onUnitChange(e) {
@@ -176,11 +176,7 @@ const suffixClass = computed(() =>
           />
           <span :class="suffixClass">{{ quantityUnitLabel }}</span>
         </div>
-        <span
-          :class="hasValidTotal
-            ? 'text-right text-base font-medium text-slate-800 dark:text-slate-100'
-            : 'text-right text-sm text-slate-500 dark:text-slate-400'"
-        >
+        <span class="text-right text-sm text-slate-500 dark:text-slate-400">
           {{ totalText }}
         </span>
       </div>
