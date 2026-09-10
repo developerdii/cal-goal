@@ -42,10 +42,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function signUp({ email, password, name }) {
     if (!isSupabaseConfigured) throw new Error('Supabase is not configured')
+    // Point the confirmation link back at the app (not the default Site URL).
+    const redirectTo = window.location.origin + window.location.pathname
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name }, emailRedirectTo: redirectTo },
     })
     if (error) throw error
     return data
