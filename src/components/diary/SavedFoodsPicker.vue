@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/ui/Icon.vue'
 import { formatKcal } from '@/utils/format'
+import { unitLabelKey } from '@/utils/units'
 
 const props = defineProps({
   items: { type: Array, default: () => [] },
@@ -28,7 +29,7 @@ function summary(item) {
     return `${formatKcal(total, locale)} kcal · ${(item.items || []).length} ${t('foods.itemCount')}`
   }
   if (item.unit) {
-    return `${item.amount} ${t(`units.${item.unit}`)} · ${formatKcal(item.perKcal, locale)} kcal`
+    return `${item.amount} ${t(unitLabelKey(item.unit, item.amount))} · ${formatKcal(item.perKcal, locale)} kcal`
   }
   return `${formatKcal(item.calories, locale)} kcal`
 }

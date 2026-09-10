@@ -55,7 +55,7 @@
     "deleteTitle": "Delete entry",
     "deleteConfirm": "Are you sure you want to delete this entry?",
     "validation": {
-      "nameRequired": "Please enter a name.",
+      "nameRequired": "Enter a name",
       "caloriesRequired": "Please enter calories.",
       "caloriesPositive": "Calories must be greater than zero."
     }
@@ -96,6 +96,10 @@
   "units": {
     "g": "g",
     "ml": "ml",
+    "oz": "oz",
+    "cup": "cup",
+    "tbsp": "tbsp",
+    "tsp": "tsp",
     "piece": "piece",
     "serving": "serving",
     "bowl": "bowl",
@@ -103,24 +107,44 @@
     "spoon": "spoon",
     "glass": "glass"
   },
+  "unitsPlural": {
+    "g": "g",
+    "ml": "ml",
+    "oz": "oz",
+    "cup": "cups",
+    "tbsp": "tbsp",
+    "tsp": "tsp",
+    "piece": "pieces",
+    "serving": "servings",
+    "bowl": "bowls",
+    "slice": "slices",
+    "spoon": "spoons",
+    "glass": "glasses"
+  },
   "form": {
-    "modeKcal": "Calories",
+    "modeKcal": "Enter total calories",
     "modeAmount": "Amount",
-    "unit": "Unit",
-    "amount": "Reference amount",
-    "perKcal": "Calories per amount",
+    "modeServing": "Calculate from serving",
+    "thisFood": "This food",
+    "howMuchAte": "How much you ate",
+    "perKcalPlaceholder": "e.g. 89",
+    "servingSize": "Serving size",
+    "calories": "Calories",
+    "kcalPerServing": "kcal per {amount} {unit}",
+    "amountEaten": "Amount eaten",
     "quantity": "Quantity",
     "total": "Total",
+    "totalHint": "Enter calories to see total",
     "saveToFoods": "Save to my foods",
     "toAmount": "Measure by amount",
     "toKcal": "Enter calories directly",
     "validation": {
-      "amountRequired": "Please enter an amount.",
-      "amountPositive": "Amount must be greater than zero.",
+      "amountRequired": "Please enter a serving size.",
+      "amountPositive": "Serving size must be greater than zero.",
       "perKcalRequired": "Please enter calories.",
       "perKcalPositive": "Calories must be greater than zero.",
-      "quantityRequired": "Please enter a quantity.",
-      "quantityPositive": "Quantity must be greater than zero."
+      "quantityRequired": "Please enter the amount eaten.",
+      "quantityPositive": "Amount eaten must be greater than zero."
     }
   },
   "foods": {

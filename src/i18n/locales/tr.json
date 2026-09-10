@@ -55,7 +55,7 @@
     "deleteTitle": "Kaydı sil",
     "deleteConfirm": "Bu kaydı silmek istediğinize emin misiniz?",
     "validation": {
-      "nameRequired": "Lütfen bir ad girin.",
+      "nameRequired": "Bir ad girin",
       "caloriesRequired": "Lütfen kalori girin.",
       "caloriesPositive": "Kalori sıfırdan büyük olmalıdır."
     }
@@ -96,6 +96,24 @@
   "units": {
     "g": "g",
     "ml": "ml",
+    "oz": "oz",
+    "cup": "bardak",
+    "tbsp": "yemek kaşığı",
+    "tsp": "çay kaşığı",
+    "piece": "adet",
+    "serving": "servis",
+    "bowl": "kase",
+    "slice": "dilim",
+    "spoon": "kaşık",
+    "glass": "bardak"
+  },
+  "unitsPlural": {
+    "g": "g",
+    "ml": "ml",
+    "oz": "oz",
+    "cup": "bardak",
+    "tbsp": "yemek kaşığı",
+    "tsp": "çay kaşığı",
     "piece": "adet",
     "serving": "servis",
     "bowl": "kase",
@@ -104,23 +122,29 @@
     "glass": "bardak"
   },
   "form": {
-    "modeKcal": "Kalori",
+    "modeKcal": "Toplam kaloriyi gir",
     "modeAmount": "Miktar",
-    "unit": "Birim",
-    "amount": "Referans miktar",
-    "perKcal": "Bu miktarın kalorisi",
+    "modeServing": "Porsiyona göre hesapla",
+    "thisFood": "Bu besin",
+    "howMuchAte": "Ne kadar yedin",
+    "perKcalPlaceholder": "örn. 89",
+    "servingSize": "Porsiyon boyutu",
+    "calories": "Kalori",
+    "kcalPerServing": "kcal / {amount} {unit}",
+    "amountEaten": "Yenilen miktar",
     "quantity": "Tüketilen miktar",
     "total": "Toplam",
+    "totalHint": "Toplamı görmek için kalori girin",
     "saveToFoods": "Besinlerime kaydet",
     "toAmount": "Miktara göre ölç",
     "toKcal": "Direkt kalori gir",
     "validation": {
-      "amountRequired": "Lütfen bir miktar girin.",
-      "amountPositive": "Miktar sıfırdan büyük olmalıdır.",
+      "amountRequired": "Lütfen bir porsiyon boyutu girin.",
+      "amountPositive": "Porsiyon boyutu sıfırdan büyük olmalıdır.",
       "perKcalRequired": "Lütfen kalori girin.",
       "perKcalPositive": "Kalori sıfırdan büyük olmalıdır.",
-      "quantityRequired": "Lütfen bir miktar girin.",
-      "quantityPositive": "Miktar sıfırdan büyük olmalıdır."
+      "quantityRequired": "Lütfen yenilen miktarı girin.",
+      "quantityPositive": "Yenilen miktar sıfırdan büyük olmalıdır."
     }
   },
   "foods": {

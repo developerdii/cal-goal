@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/ui/Icon.vue'
 import { formatKcal } from '@/utils/format'
+import { unitLabelKey } from '@/utils/units'
 
 const props = defineProps({
   entry: { type: Object, required: true },
@@ -18,7 +19,7 @@ const groupTotal = computed(() =>
 )
 
 function amountText(it) {
-  return it.unit ? `${it.quantity} ${t(`units.${it.unit}`)} · ` : ''
+  return it.unit ? `${it.quantity} ${t(unitLabelKey(it.unit, it.quantity))} · ` : ''
 }
 </script>
 

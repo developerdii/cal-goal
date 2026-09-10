@@ -3,7 +3,7 @@ import { reactive, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import Icon from '@/components/ui/Icon.vue'
-import { UNIT_CODES, DEFAULT_UNIT } from '@/utils/units'
+import { UNIT_CODES, DEFAULT_UNIT, unitLabelKey } from '@/utils/units'
 import { resolveKcal } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
@@ -150,9 +150,9 @@ const groupTotal = computed(() => form.items.reduce((sum, it) => sum + itemTotal
 
 function refText(it) {
   if (it.amount && it.perKcal) {
-    return `${it.amount} ${t(`units.${it.unit}`)} = ${it.perKcal} kcal`
+    return `${it.amount} ${t(unitLabelKey(it.unit, it.amount))} = ${it.perKcal} kcal`
   }
-  return t('form.perKcal')
+  return t('form.calories')
 }
 
 function isFilled(it) {
@@ -412,12 +412,12 @@ const compactInputClass =
     <template #footer>
       <label
         v-if="!isLibrary"
-        class="flex cursor-pointer items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:bg-slate-800/50 dark:text-slate-300"
+        class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
       >
         <input
           v-model="saveToFoods"
           type="checkbox"
-          class="h-4 w-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500"
+          class="custom-checkbox"
         />
         <span>{{ t('form.saveToFoods') }}</span>
       </label>

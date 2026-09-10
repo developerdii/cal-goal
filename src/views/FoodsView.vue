@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useFoodsStore } from '@/stores/foodsStore'
 import { formatKcal } from '@/utils/format'
+import { unitLabelKey } from '@/utils/units'
 import EntryFormModal from '@/components/diary/EntryFormModal.vue'
 import GroupFormModal from '@/components/diary/GroupFormModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -83,7 +84,7 @@ function summary(food) {
     return `${formatKcal(total, locale)} kcal · ${(food.items || []).length} ${t('foods.itemCount')}`
   }
   if (food.unit) {
-    return `${food.amount} ${t(`units.${food.unit}`)} · ${formatKcal(food.perKcal, locale)} kcal`
+    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale)} kcal`
   }
   return `${formatKcal(food.calories, locale)} kcal`
 }
