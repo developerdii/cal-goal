@@ -176,35 +176,32 @@ async function flush() {
 }
 
 // Loads the document for the given user (or the guest doc when user is null).
+// Throws if a signed-in user's cloud data can't be loaded or seeded, so the
+// caller can react (e.g. sign the user out).
 async function init(user) {
   await flush()
 
   if (user?.id && isSupabaseConfigured && supabase) {
-    try {
-      const remote = await loadCloud(user.id)
-      if (remote) {
-        state = remote
-      } else if (hasMeaningfulLocalData(loadLocal())) {
-        // First sign-in: migrate the existing guest data to the cloud.
-        state = loadLocal()
-      } else {
-        state = createDefaultData()
-      }
-      mode = 'cloud'
-      userId = user.id
-      await saveCloud(user.id, state)
-    } catch (err) {
-      console.error('storageService: cloud load failed, using local data', err)
-      mode = 'local'
-      userId = null
+    const remote = await loadCloud(user.id)
+    if (remote) {
+      state = remote
+    } else if (hasMeaningfulLocalData(loadLocal())) {
+      // First sign-in: migrate the existing guest data to the cloud.
       state = loadLocal()
+    } else {
+      state = createDefaultData()
     }
-  } else {
-    mode = 'local'
-    userId = null
-    state = loadLocal()
+    mode = 'cloud'
+    userId = user.id
+    if (!remote) {
+      await saveCloud(user.id, state)
+    }
+    return state
   }
 
+  mode = 'local'
+  userId = null
+  state = loadLocal()
   return state
 }
 

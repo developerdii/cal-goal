@@ -30,7 +30,17 @@ function applyAppPrefs() {
 // Loads the persisted document (local for guests, cloud for signed-in users)
 // and refreshes every store from it.
 async function reloadData(user) {
-  await storageService.init(user)
+  try {
+    await storageService.init(user)
+  } catch (err) {
+    if (user?.id) {
+      // A signed-in user whose cloud data can't be loaded is treated as a
+      // failed session: sign out and fall back to guest (local) data.
+      console.error('storageService: cloud load failed, signing out', err)
+      await authStore.signOut()
+      return
+    }
+  }
   appStore.init()
   settingsStore.init()
   diaryStore.init()
@@ -48,11 +58,8 @@ function onVisibilityChange() {
 onMounted(async () => {
   document.addEventListener('visibilitychange', onVisibilityChange)
 
-  await authStore.init()
-  currentUserId = authStore.user?.id ?? null
-  await reloadData(authStore.user)
-  ready.value = true
-
+  // Register the auth listener before the initial load so a forced sign-out
+  // (e.g. a failed cloud load) is handled consistently from the very start.
   unsubscribeAuth = authStore.onAuthStateChange(async (_event, user) => {
     const nextId = user?.id ?? null
     if (nextId === currentUserId) return
@@ -64,6 +71,11 @@ onMounted(async () => {
       ready.value = true
     }
   })
+
+  await authStore.init()
+  currentUserId = authStore.user?.id ?? null
+  await reloadData(authStore.user)
+  ready.value = true
 })
 
 onUnmounted(() => {
