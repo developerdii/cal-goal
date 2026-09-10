@@ -14,7 +14,6 @@ const app = useAppStore()
 const open = ref(false)
 const triggerRef = ref(null)
 const panelRef = ref(null)
-
 const signingOut = ref(false)
 const signOutError = ref('')
 
@@ -229,7 +228,7 @@ onBeforeUnmount(() => {
             type="button"
             role="menuitem"
             :disabled="signingOut"
-            class="flex w-full items-center justify-end gap-2 px-4 py-2 text-sm text-rose-600 transition-colors hover:bg-rose-50 disabled:opacity-60 dark:text-rose-400 dark:hover:bg-rose-950"
+            class="flex w-full items-center justify-center gap-2 px-4 py-2 text-sm text-rose-600 transition-colors hover:bg-rose-50 disabled:opacity-60 dark:text-rose-400 dark:hover:bg-rose-950"
             @click="signOut"
           >
             <span
