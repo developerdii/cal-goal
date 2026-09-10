@@ -8,6 +8,10 @@ project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Supabase auth & cloud sync**: optional email/password sign-up and sign-in. Signed-in
+  users store their data as a single JSON document in Supabase (synced across devices);
+  guests keep using localStorage. Includes Row Level Security schema, an async storage
+  layer, and TR/EN auth screens.
 - **Foods library (favorites)**: save foods/groups while logging ("Save to my foods"),
   quick-add them from the add screen, and manage them on a new "Foods" tab.
 - **Per-unit calories**: log foods by amount (e.g. "100 g = 110 kcal") and enter a

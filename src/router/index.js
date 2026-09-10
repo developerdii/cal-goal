@@ -6,6 +6,8 @@ const routes = [
   { path: '/week', name: 'week', component: () => import('@/views/WeekView.vue') },
   { path: '/settings', name: 'settings', component: () => import('@/views/SettingsView.vue') },
   { path: '/foods', name: 'foods', component: () => import('@/views/FoodsView.vue') },
+  { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue') },
+  { path: '/signup', name: 'signup', component: () => import('@/views/SignupView.vue') },
 ]
 
 // Hash history is used so deep links (e.g. /week) work on static hosting like

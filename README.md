@@ -21,7 +21,7 @@ grow into API-based automatic calorie calculation and a real database backend.
 
 ## Tech
 
-Vue 3 · Vite · Pinia · Vue Router · vue-i18n · Tailwind CSS · localStorage · Vitest
+Vue 3 · Vite · Pinia · Vue Router · vue-i18n · Tailwind CSS · localStorage · Supabase · Vitest
 
 ## Getting started
 
@@ -43,15 +43,42 @@ Hosted on GitHub Pages; deploys are handled by
 
 Live URL: https://developerdii.github.io/cal-goal/
 
+## Supabase (optional cloud sync)
+
+The app works offline-first with `localStorage` for guests. Optionally sign in with
+Supabase to sync your data across devices:
+
+1. Create a Supabase project, then run the SQL in
+   [`supabase/schema.sql`](supabase/schema.sql) (Supabase Dashboard → SQL editor).
+   This creates the `user_data` table with Row Level Security.
+2. Copy your **Project URL** and **anon key** (Dashboard → Project Settings → API)
+   into `.env.local`:
+
+   ```bash
+   VITE_SUPABASE_URL=https://xxxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJ...
+   ```
+
+3. (Optional) To let users sign in immediately after sign-up, disable
+   "Confirm email" under Supabase → Authentication → Providers → Email.
+4. Restart the dev server — a "Sign in" button appears in the header.
+
+When signed in, all data (days, settings, foods, preferences) is stored as a single
+JSON document per user in Supabase. The first sign-in migrates any existing local
+data to the cloud; signing out returns to local storage.
+
+> For the GitHub Pages deploy, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+> as repository secrets (they are injected at build time by the workflow).
+
 ## Architecture
 
 ```
 components ──▶ stores (Pinia) ──▶ storageService ──▶ localStorage
 ```
 
-- **`src/services/storageService.js`** is the *only* module that touches `localStorage`.
-  To migrate to a real database, replace its internals (making methods async if needed)
-  behind the same interface — no component or store changes required.
+- **`src/services/storageService.js`** is the *only* persistence boundary. Guests write
+  to `localStorage`; signed-in users write to Supabase. It keeps a stable, mostly
+  synchronous interface — only `init()` (load) and `flush()` (force save) are async.
 - **`src/stores`** hold app state (prefs, settings, diary) and orchestrate persistence.
 - **`src/utils`** contain pure, unit-tested domain logic (dates, weekly analysis, formatting).
 

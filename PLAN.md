@@ -94,6 +94,13 @@ real database backend.
 - [x] Amount eaten starts empty and falls back to the reference amount; unit change clears calories (no conversion)
 - [x] Total sentence with empty-state hint; inline name validation + focus; custom "Save to my foods" checkbox
 
+### M13 — Supabase auth & cloud sync ✅
+- [x] Optional email/password sign-up / sign-in / sign-out (Supabase)
+- [x] Signed-in users persist to Supabase (`user_data` table + RLS); guests keep localStorage
+- [x] `storageService` made async-aware (`init`/`flush`) with an in-memory doc cache + debounced cloud writes
+- [x] First sign-in migrates existing local data to the cloud
+- [x] Login/Signup views + header/settings auth UI + TR/EN i18n + deploy env vars
+
 ## Folder / File Structure
 
 ```

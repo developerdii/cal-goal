@@ -3,3 +3,8 @@ dist
 .DS_Store
 *.local
 coverage
+
+# Local environment files (Supabase keys, etc.)
+.env
+.env.*
+!.env.example
