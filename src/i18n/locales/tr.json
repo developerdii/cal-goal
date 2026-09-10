@@ -12,7 +12,7 @@
     "email": "E-posta",
     "password": "Şifre",
     "namePlaceholder": "örn. Ayşe Yılmaz",
-    "emailPlaceholder": "sen@ornek.com",
+    "emailPlaceholder": "sen{'@'}ornek.com",
     "passwordPlaceholder": "••••••••",
     "signInTitle": "Giriş yap",
     "signUpTitle": "Hesap oluştur",
