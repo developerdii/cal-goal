@@ -33,6 +33,16 @@ npm run preview   # preview the production build
 npm test          # run unit tests
 ```
 
+## Deploy
+
+Hosted on GitHub Pages; deploys are handled by
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+- **Auto:** pushing to `main` triggers a build + deploy.
+- **Manual:** the workflow can also be run from the repo's **Actions** tab.
+
+Live URL: https://developerdii.github.io/cal-goal/
+
 ## Architecture
 
 ```

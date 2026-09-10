@@ -15,6 +15,9 @@ project adheres to [Semantic Versioning](https://semver.org/).
 - **Saved-foods picker in add flow**: "Add food"/"Add group" show the last 5 saved
   items (foods vs. groups respectively) with quick-add (+) and "fill form" (edit)
   actions; each group item can also be filled from saved foods.
+- **"Add entry" modal refinement**: "This food" and "How much you ate" cards with an
+  aligned grid, pluralized unit labels, a fuller unit list (`g, ml, oz, cup, tbsp, tsp,
+  piece, slice, serving`), and a custom-styled "Save to my foods" checkbox.
 
 ### Changed
 - Rebranded the application from **"Calorie Counter"** to **"CalGoal"**:
@@ -39,8 +42,15 @@ project adheres to [Semantic Versioning](https://semver.org/).
   "See all" action that opens a searchable modal when more are available. The confusing
   per-item star button in "Add group" was replaced by a top-level "Add from saved
   foods" button that opens the same searchable modal.
+- **"Add entry" modal**: split fields into "This food" / "How much you ate" cards with
+  right-aligned inputs; relabeled the toggle to "Enter total calories" / "Calculate from
+  serving" (default serving); default unit `g`; amount eaten starts empty and falls back
+  to the reference amount.
 
 ### Fixed
 - Weekly analysis now shows a clean "no entries" empty state (and hides the summary
   balance cards) for any week with no logged calories — past, current, and future weeks
   now behave consistently.
+- Calories field placeholder is now "e.g. 89" instead of a numeric-looking "120", and
+  Save shows an inline "Enter a name" error (with focus) instead of being silently
+  disabled.

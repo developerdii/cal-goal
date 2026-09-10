@@ -86,6 +86,14 @@ real database backend.
 - [x] Weekly: balance vs daily target; weight projection vs maintenance (7000 kcal ≈ 1 kg)
 - [x] i18n (TR/EN), tests, docs
 
+### M12 — "Add entry" modal refinement ✅
+- [x] Split serving/calories/amount-eaten into "This food" and "How much you ate" cards with an aligned grid
+- [x] Right-aligned numeric inputs; "kcal" as the fixed second column
+- [x] Segmented control relabeled "Enter total calories" / "Calculate from serving" (default serving)
+- [x] Default unit `g`; fuller unit list (`g, ml, oz, cup, tbsp, tsp, piece, slice, serving`)
+- [x] Amount eaten starts empty and falls back to the reference amount; unit change clears calories (no conversion)
+- [x] Total sentence with empty-state hint; inline name validation + focus; custom "Save to my foods" checkbox
+
 ## Folder / File Structure
 
 ```
@@ -208,6 +216,7 @@ Single versioned key `calgoal`:
 - [x] Foods library (favorites): save / quick-add / manage + per-unit calorie entry (grams, servings…)
 - [x] "Add Group" modal redesign (live total, compact rows, labeled mode toggle, sticky footer); "Add Food" modal aligned to match
 - [x] Explicit deficit/surplus goal: maintenance calories + goal type + kcal/day → calculated daily target & weekly projection
+- [x] "Add entry" modal refinement (cards, aligned grid, fuller unit list, pluralization, custom checkbox)
 
 ## Change Log (recent)
 
@@ -217,3 +226,6 @@ Single versioned key `calgoal`:
 - **Header layout**: logo/icon + name + tagline remain on the left; TR/EN switcher +
   theme toggle are grouped on the right. The tagline now hides below the `sm` breakpoint,
   and the controls use `shrink-0` + `gap-3` so nothing overlaps or wraps on small screens.
+- **"Add entry" modal**: two-card layout ("This food" / "How much you ate"), aligned
+  input grid, "Enter total calories" vs. "Calculate from serving" toggle, fuller unit
+  list with no conversion, and pluralized unit labels.
