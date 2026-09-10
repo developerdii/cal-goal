@@ -66,6 +66,21 @@ export const useAuthStore = defineStore('auth', () => {
     session.value = null
   }
 
+  async function resetPassword(email) {
+    if (!isSupabaseConfigured) throw new Error('Supabase is not configured')
+    // Point back at the app base (no hash) so Supabase can append the recovery
+    // tokens cleanly; App.vue detects them and routes to /reset-password.
+    const redirectTo = window.location.origin + window.location.pathname
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+    if (error) throw error
+  }
+
+  async function updatePassword(password) {
+    if (!isSupabaseConfigured) throw new Error('Supabase is not configured')
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw error
+  }
+
   return {
     user,
     session,
@@ -78,5 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
     signUp,
     signIn,
     signOut,
+    resetPassword,
+    updatePassword,
   }
 })

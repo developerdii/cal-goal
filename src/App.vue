@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppBottomNav from '@/components/layout/AppBottomNav.vue'
 import { useAppStore } from '@/stores/appStore'
@@ -12,6 +13,7 @@ import { storageService } from '@/services/storageService'
 import { applyTheme } from '@/composables/useTheme'
 
 const { locale } = useI18n()
+const router = useRouter()
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -83,9 +85,23 @@ onMounted(async () => {
   })
 
   await authStore.init()
+
+  // Supabase delivers password-recovery / email-confirmation tokens in the URL
+  // hash. detectSessionInUrl already exchanged them for a session; clean the
+  // hash so the hash router ignores it, then route to the right screen.
+  const hash = window.location.hash || ''
+  const isRecovery = hash.includes('type=recovery')
+  if (isRecovery || hash.includes('access_token') || hash.includes('error=')) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  }
+
   currentUserId = authStore.user?.id ?? null
   await reloadData(authStore.user)
   ready.value = true
+
+  if (isRecovery) {
+    await router.replace('/reset-password')
+  }
 })
 
 onUnmounted(() => {

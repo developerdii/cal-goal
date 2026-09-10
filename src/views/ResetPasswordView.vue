@@ -1,34 +1,42 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { authErrorKey } from '@/utils/authErrors'
 
 const { t } = useI18n()
-const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
-const email = ref('')
 const password = ref('')
+const confirm = ref('')
 const loading = ref(false)
 const errorKey = ref('')
-const infoKey = ref(route.query.signup === 'success' ? 'auth.confirmationSent' : '')
+const success = ref(false)
+
+onMounted(() => {
+  // Only reachable with an active (recovery) session; otherwise go to sign in.
+  if (!auth.isAuthenticated) router.replace('/login')
+})
 
 async function submit() {
   errorKey.value = ''
-  if (!email.value.trim() || !password.value) {
-    errorKey.value = 'auth.errors.invalidCredentials'
+  if (password.value.length < 6) {
+    errorKey.value = 'auth.errors.weakPassword'
+    return
+  }
+  if (password.value !== confirm.value) {
+    errorKey.value = 'auth.errors.passwordsDoNotMatch'
     return
   }
   loading.value = true
   try {
-    await auth.signIn({ email: email.value.trim(), password: password.value })
-    router.replace('/')
+    await auth.updatePassword(password.value)
+    success.value = true
+    setTimeout(() => router.replace('/'), 1000)
   } catch (err) {
     errorKey.value = authErrorKey(err)
-  } finally {
     loading.value = false
   }
 }
@@ -40,9 +48,9 @@ const inputClass =
 <template>
   <div class="mx-auto max-w-sm space-y-4">
     <div class="text-center">
-      <h2 class="text-lg font-bold">{{ t('auth.signInTitle') }}</h2>
+      <h2 class="text-lg font-bold">{{ t('auth.resetPasswordTitle') }}</h2>
       <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        {{ t('auth.signInSubtitle') }}
+        {{ t('auth.resetPasswordSubtitle') }}
       </p>
     </div>
 
@@ -52,25 +60,23 @@ const inputClass =
     >
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('auth.email') }}
+          {{ t('auth.newPassword') }}
         </label>
         <input
-          v-model="email"
-          type="email"
-          autocomplete="email"
-          :placeholder="t('auth.emailPlaceholder')"
+          v-model="password"
+          type="password"
+          autocomplete="new-password"
           :class="inputClass"
         />
       </div>
       <div>
         <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('auth.password') }}
+          {{ t('auth.confirmPassword') }}
         </label>
         <input
-          v-model="password"
+          v-model="confirm"
           type="password"
-          autocomplete="current-password"
-          :placeholder="t('auth.passwordPlaceholder')"
+          autocomplete="new-password"
           :class="inputClass"
         />
       </div>
@@ -78,36 +84,17 @@ const inputClass =
       <p v-if="errorKey" class="text-sm font-medium text-rose-600 dark:text-rose-400">
         {{ t(errorKey) }}
       </p>
-      <p v-if="infoKey" class="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-        {{ t(infoKey) }}
+      <p v-if="success" class="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+        {{ t('auth.passwordUpdated') }}
       </p>
 
       <button
         type="submit"
-        :disabled="loading"
+        :disabled="loading || success"
         class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-600 disabled:opacity-60"
       >
-        {{ loading ? '…' : t('auth.submitSignIn') }}
+        {{ loading ? '…' : t('auth.updatePassword') }}
       </button>
     </form>
-
-    <p class="text-center text-sm">
-      <RouterLink
-        to="/forgot-password"
-        class="font-medium text-slate-500 transition-colors hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-      >
-        {{ t('auth.forgotPassword') }}
-      </RouterLink>
-    </p>
-
-    <p class="text-center text-sm text-slate-500 dark:text-slate-400">
-      {{ t('auth.noAccount') }}
-      <RouterLink
-        to="/signup"
-        class="font-semibold text-emerald-600 dark:text-emerald-400"
-      >
-        {{ t('auth.signUpLink') }}
-      </RouterLink>
-    </p>
   </div>
 </template>

@@ -27,6 +27,18 @@
     "guestHint": "Uygulamayı hesapsız kullanabilirsiniz; verileriniz yalnızca bu cihazda saklanır.",
     "confirmationSent": "Hesap oluşturuldu. Onaylamak için e-postanızı kontrol edin, sonra giriş yapın.",
     "passwordMin": "En az 6 karakter kullanın.",
+    "forgotPassword": "Şifremi unuttum?",
+    "forgotPasswordTitle": "Şifre sıfırla",
+    "forgotPasswordSubtitle": "E-postanızı girin, size sıfırlama bağlantısı gönderelim.",
+    "sendResetLink": "Sıfırlama bağlantısı gönder",
+    "resetLinkSent": "Bu e-posta için bir hesap varsa, sıfırlama bağlantısı gönderildi.",
+    "resetPasswordTitle": "Yeni şifre belirle",
+    "resetPasswordSubtitle": "Hesabınız için yeni bir şifre girin.",
+    "newPassword": "Yeni şifre",
+    "confirmPassword": "Şifreyi onayla",
+    "updatePassword": "Şifreyi güncelle",
+    "passwordUpdated": "Şifre güncellendi.",
+    "backToSignIn": "Girişe dön",
     "errors": {
       "generic": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
       "nameRequired": "Adınızı girin.",
@@ -36,7 +48,8 @@
       "alreadyRegistered": "Bu e-posta ile zaten bir hesap var.",
       "weakPassword": "Şifre çok zayıf. En az 6 karakter kullanın.",
       "rateLimit": "Çok fazla deneme. Lütfen daha sonra tekrar deneyin.",
-      "signOutFailed": "Çıkış yapılamadı. Tekrar deneyin."
+      "signOutFailed": "Çıkış yapılamadı. Tekrar deneyin.",
+      "passwordsDoNotMatch": "Şifreler eşleşmiyor."
     }
   },
   "nav": {
