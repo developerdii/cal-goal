@@ -139,6 +139,7 @@ function onQuickAddGroup(food) {
   })
   groupOpen.value = false
 }
+
 function onDeleteFromModal() {
   if (editingEntry.value) diary.removeEntry(selectedKey.value, editingEntry.value.id)
   foodOpen.value = false

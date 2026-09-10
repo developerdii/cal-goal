@@ -6,8 +6,7 @@ import { DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
 import { formatKcal } from '@/utils/format'
 import { useServingCalc } from '@/composables/useServingCalc'
 import { useFoodsStore } from '@/stores/foodsStore'
-import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
-import SavedFoodsModal from '@/components/diary/SavedFoodsModal.vue'
+import SavedItemsPicker from '@/components/diary/SavedItemsPicker.vue'
 import ServingFields from '@/components/diary/ServingFields.vue'
 
 const props = defineProps({
@@ -23,9 +22,7 @@ const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
 const foodsStore = useFoodsStore()
-const savedFoods = computed(() => foodsStore.recent('food', 5))
 const allFoods = computed(() => foodsStore.all('food'))
-const foodsPickerOpen = ref(false)
 const nameInput = ref(null)
 
 const form = reactive({
@@ -79,7 +76,6 @@ const totalText = computed(() =>
 watch(
   () => props.open,
   (open) => {
-    foodsPickerOpen.value = false
     if (!open) return
     resetForm()
     const src = isLibrary.value ? props.food : props.entry
@@ -128,6 +124,13 @@ function clearErrors() {
   errors.quantity = ''
 }
 
+function foodMeta(food) {
+  if (food.unit) {
+    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale)} kcal`
+  }
+  return `${formatKcal(food.calories, locale)} kcal`
+}
+
 function fillFromSaved(food) {
   form.name = food.name
   if (food.amount != null && food.perKcal != null) {
@@ -143,13 +146,12 @@ function fillFromSaved(food) {
 }
 
 function onQuickAdd(food) {
-  foodsPickerOpen.value = false
   emit('quickAdd', food)
 }
 
-function fillFromSavedModal(food) {
-  foodsPickerOpen.value = false
-  fillFromSaved(food)
+function onCreateFood(query) {
+  form.name = query
+  nameInput.value?.focus()
 }
 
 function validate() {
@@ -257,15 +259,15 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <form id="food-form" class="space-y-3" @submit.prevent="submit">
       <div v-if="!isLibrary && !entry">
-        <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          {{ t('foods.heading') }}
-        </p>
-        <SavedFoodsPicker
-          :items="savedFoods"
-          :total="allFoods.length"
-          @quickAdd="onQuickAdd"
-          @fill="fillFromSaved"
-          @seeAll="foodsPickerOpen = true"
+        <SavedItemsPicker
+          :label="t('foods.chooseFromFoods')"
+          :items="allFoods"
+          :meta="foodMeta"
+          :create-label="(q) => t('foods.createFood', { query: q })"
+          storage-key="entry.foods"
+          @quick-add="onQuickAdd"
+          @select="fillFromSaved"
+          @create="onCreateFood"
         />
       </div>
 
@@ -389,13 +391,4 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
       </div>
     </template>
   </BaseModal>
-
-  <SavedFoodsModal
-    :open="foodsPickerOpen"
-    :title="t('foods.heading')"
-    :items="allFoods"
-    @close="foodsPickerOpen = false"
-    @select="fillFromSavedModal"
-    @quickAdd="onQuickAdd"
-  />
 </template>

@@ -1,15 +1,14 @@
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import Icon from '@/components/ui/Icon.vue'
-import { DEFAULT_UNIT, defaultServingAmount } from '@/utils/units'
+import { DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
 import { resolveKcal, resolveQuantity } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
 import { useFoodsStore } from '@/stores/foodsStore'
-import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
-import SavedFoodsModal from '@/components/diary/SavedFoodsModal.vue'
+import SavedItemsPicker from '@/components/diary/SavedItemsPicker.vue'
 import ServingFields from '@/components/diary/ServingFields.vue'
 
 const props = defineProps({
@@ -25,13 +24,10 @@ const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
 const foodsStore = useFoodsStore()
-const savedGroups = computed(() => foodsStore.recent('group', 5))
 const allGroups = computed(() => foodsStore.all('group'))
 const allFoods = computed(() => foodsStore.all('food'))
-const groupsPickerOpen = ref(false)
-const foodsPickerOpen = ref(false)
 const nameInput = ref(null)
-const firstItemNameInput = ref(null)
+const itemNameInputs = ref([])
 
 const form = reactive({ name: '', items: [] })
 const saveToFoods = ref(false)
@@ -78,8 +74,6 @@ function fromSource(item) {
 watch(
   () => props.open,
   (open) => {
-    groupsPickerOpen.value = false
-    foodsPickerOpen.value = false
     if (!open) return
     const src = isLibrary.value ? props.food : props.group
     form.name = src?.name ?? ''
@@ -143,25 +137,48 @@ function applyFoodToItem(it, food) {
   }
 }
 
+function foodMeta(food) {
+  if (food.unit) {
+    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale)} kcal`
+  }
+  return `${formatKcal(food.calories, locale)} kcal`
+}
+
+function groupMeta(group) {
+  const total = (group.items || []).reduce(
+    (s, it) => s + (it.unit ? Number(it.perKcal) : Number(it.calories)),
+    0,
+  )
+  const n = (group.items || []).length
+  return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')} · ${formatKcal(total, locale)} kcal`
+}
+
 function addFoodFromSaved(food) {
   const it = emptyItem()
   applyFoodToItem(it, food)
   form.items.push(it)
-  foodsPickerOpen.value = false
 }
 
-function fillGroupFromSavedModal(food) {
-  groupsPickerOpen.value = false
-  fillFromSavedGroup(food)
+function onQuickAddGroup(group) {
+  emit('quickAddGroup', group)
 }
 
-function onQuickAddGroup(food) {
-  groupsPickerOpen.value = false
-  emit('quickAddGroup', food)
+function onCreateGroup(query) {
+  form.name = query
+  nameInput.value?.focus()
+}
+
+function onCreateFood(query) {
+  const it = emptyItem()
+  it.name = query
+  form.items.push(it)
+  nextTick(() => {
+    itemNameInputs.value[form.items.length - 1]?.focus()
+  })
 }
 
 function setItemNameRef(el, index) {
-  if (index === 0) firstItemNameInput.value = el
+  if (el) itemNameInputs.value[index] = el
 }
 
 function itemTotal(it) {
@@ -236,7 +253,7 @@ function submit() {
     return
   }
   if (!validate()) {
-    if (errors.items) firstItemNameInput.value?.focus()
+    if (errors.items) itemNameInputs.value[0]?.focus()
     return
   }
 
@@ -284,15 +301,15 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
   <BaseModal :open="open" :title="title" @close="emit('close')">
     <form id="group-form" class="space-y-3" @submit.prevent="submit">
       <div v-if="!isLibrary && !group">
-        <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          {{ t('foods.heading') }}
-        </p>
-        <SavedFoodsPicker
-          :items="savedGroups"
-          :total="allGroups.length"
-          @quickAdd="onQuickAddGroup"
-          @fill="fillFromSavedGroup"
-          @seeAll="groupsPickerOpen = true"
+        <SavedItemsPicker
+          :label="t('foods.chooseFromGroups')"
+          :items="allGroups"
+          :meta="groupMeta"
+          :create-label="(q) => t('foods.createGroup', { query: q })"
+          storage-key="group.groups"
+          @quick-add="onQuickAddGroup"
+          @select="fillFromSavedGroup"
+          @create="onCreateGroup"
         />
       </div>
 
@@ -380,22 +397,24 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
           </div>
         </div>
 
-        <div class="mt-2 flex items-center justify-end gap-1.5">
+        <div class="mt-2 flex items-start justify-end gap-1.5">
+          <SavedItemsPicker
+            class="min-w-0 flex-1"
+            :label="t('foods.chooseFromFoods')"
+            :items="allFoods"
+            :meta="foodMeta"
+            :create-label="(q) => t('foods.createFood', { query: q })"
+            :show-select="false"
+            storage-key="group.foods"
+            @quick-add="addFoodFromSaved"
+            @create="onCreateFood"
+          />
           <button
-            v-if="allFoods.length"
             type="button"
-            class="flex items-center gap-1 rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-emerald-600 transition-colors hover:bg-emerald-50 dark:border-slate-700 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
-            @click="foodsPickerOpen = true"
-          >
-            <Icon name="star" class="h-3.5 w-3.5" />
-            {{ t('foods.addFromSaved') }}
-          </button>
-          <button
-            type="button"
-            class="flex items-center gap-1 rounded-md bg-emerald-500 px-2.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600"
+            class="flex h-10 shrink-0 items-center gap-1 rounded-md bg-emerald-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
             @click="addItem"
           >
-            <Icon name="plus" class="h-3.5 w-3.5" />
+            <Icon name="plus" class="h-4 w-4" />
             {{ t('group.addItem') }}
           </button>
         </div>
@@ -455,22 +474,4 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
       </div>
     </template>
   </BaseModal>
-
-  <SavedFoodsModal
-    :open="groupsPickerOpen"
-    :title="t('foods.savedGroups')"
-    :items="allGroups"
-    @close="groupsPickerOpen = false"
-    @select="fillGroupFromSavedModal"
-    @quickAdd="onQuickAddGroup"
-  />
-
-  <SavedFoodsModal
-    :open="foodsPickerOpen"
-    :title="t('foods.heading')"
-    :items="allFoods"
-    fill-only
-    @close="foodsPickerOpen = false"
-    @select="addFoodFromSaved"
-  />
 </template>

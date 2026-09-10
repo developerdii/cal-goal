@@ -136,6 +136,16 @@ export const storageService = {
     saveData(data)
   },
 
+  // ---- UI state (per-instance toggles, e.g. picker open/closed) ----
+  getPref(name) {
+    return loadData().prefs?.[name]
+  },
+  setPref(name, value) {
+    const data = loadData()
+    data.prefs = { ...data.prefs, [name]: value }
+    saveData(data)
+  },
+
   // ---- Foods (favorites library) ----
   getFoods() {
     return clone(loadData().foods)
