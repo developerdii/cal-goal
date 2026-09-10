@@ -18,7 +18,7 @@ const props = defineProps({
   context: { type: String, default: 'log' }, // 'log' | 'library'
 })
 
-const emit = defineEmits(['close', 'save', 'delete', 'quickAddGroup'])
+const emit = defineEmits(['close', 'save', 'delete', 'quick-add-group'])
 
 const { t, locale } = useI18n()
 
@@ -160,7 +160,7 @@ function addFoodFromSaved(food) {
 }
 
 function onQuickAddGroup(group) {
-  emit('quickAddGroup', group)
+  emit('quick-add-group', group)
 }
 
 function onCreateGroup(query) {
@@ -390,7 +390,7 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
               density="compact"
               v-model:unit="it.unit"
               v-model:amount="it.amount"
-              v-model:perKcal="it.perKcal"
+              v-model:per-kcal="it.perKcal"
               v-model:quantity="it.quantity"
               :show-amount-eaten="!isLibrary"
             />
