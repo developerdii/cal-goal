@@ -220,7 +220,7 @@ const arrowClass =
       @close="foodOpen = false"
       @save="onSaveFood"
       @delete="onDeleteFromModal"
-      @quickAdd="onQuickAddFood"
+      @quick-add="onQuickAddFood"
     />
 
     <GroupFormModal
@@ -229,7 +229,7 @@ const arrowClass =
       @close="groupOpen = false"
       @save="onSaveGroup"
       @delete="onDeleteFromModal"
-      @quickAddGroup="onQuickAddGroup"
+      @quick-add-group="onQuickAddGroup"
     />
 
     <ConfirmDialog

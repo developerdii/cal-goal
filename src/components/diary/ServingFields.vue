@@ -22,7 +22,6 @@ const isCompact = computed(() => props.density === 'compact')
 
 const {
   referenceAmountText,
-  effectiveQuantity,
   quantityUnitLabel,
   total,
   hasValidTotal,

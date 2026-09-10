@@ -13,7 +13,13 @@ This repo uses a `develop` → `main` flow. Apply it to every task, including co
 - Conventional prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`.
 - One logical change per commit.
 - Push only to `origin develop`.
-- Before finishing a task, run `npm test` and `npm run build`; both must pass.
+- Before finishing a task, run `npm run lint`, `npm test`, and `npm run build`; all must pass.
+
+## CI pipeline
+- `.github/workflows/ci.yml` runs on every push to `develop` and every PR targeting `main` / `develop`.
+- It runs `npm run lint` (strict, `--max-warnings=0`), `npm test`, and `npm run build`. All must pass.
+- Merges to `main` stay **manual** (maintainer approval only). CI **gates** the PR/merge — it does **not** auto-merge.
+- To enforce the gate, enable branch protection on `main` requiring the `CI` status check (GitHub repo → Settings → Branches → Require status checks). This is a repo-settings step, not code.
 
 ## Keep `.clinerules/` in sync
 - `.clinerules/*.md` is the living source of truth for how I understand this project. Keep it accurate.

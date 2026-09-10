@@ -16,7 +16,7 @@ const props = defineProps({
   context: { type: String, default: 'log' }, // 'log' | 'library'
 })
 
-const emit = defineEmits(['close', 'save', 'delete', 'quickAdd'])
+const emit = defineEmits(['close', 'save', 'delete', 'quick-add'])
 
 const { t, locale } = useI18n()
 
@@ -146,7 +146,7 @@ function fillFromSaved(food) {
 }
 
 function onQuickAdd(food) {
-  emit('quickAdd', food)
+  emit('quick-add', food)
 }
 
 function onCreateFood(query) {
@@ -310,7 +310,7 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
         density="comfortable"
         v-model:unit="form.unit"
         v-model:amount="form.amount"
-        v-model:perKcal="form.perKcal"
+        v-model:per-kcal="form.perKcal"
         v-model:quantity="form.quantity"
         :show-amount-eaten="!isLibrary"
         :errors="errors"

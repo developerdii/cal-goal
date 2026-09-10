@@ -3,13 +3,15 @@
 **CalGoal** — a mobile-first calorie-tracking web app (Vue 3 SPA). Logs daily intake against a goal, weekly analysis, a saved-foods library, optional Supabase cloud sync, TR/EN locales, and dark/light theming.
 
 ## Tech stack
-Vue 3 (Composition API + `<script setup>`) · Vite · Pinia · Vue Router (hash history) · vue-i18n · Tailwind CSS v3 · Vitest · localStorage · Supabase (`@supabase/supabase-js`).
+Vue 3 (Composition API + `<script setup>`) · Vite · Pinia · Vue Router (hash history) · vue-i18n · Tailwind CSS v3 · Vitest · ESLint (flat config, `eslint-plugin-vue`) · localStorage · Supabase (`@supabase/supabase-js`).
 
 ## Commands
 ```bash
-npm run dev     # dev server
-npm run build   # production build
-npm test        # unit tests (vitest run)
+npm run dev       # dev server
+npm run build     # production build
+npm test          # unit tests (vitest run)
+npm run lint      # ESLint (Vue 3 recommended, --max-warnings=0)
+npm run lint:fix  # ESLint autofix
 ```
 
 ## Key facts

@@ -22,3 +22,11 @@
 ## Testing
 - Add a Vitest test in `tests/` for any new pure logic in `src/utils/`.
 - Follow existing style (descriptive `it(...)` names).
+
+## Linting
+- ESLint flat config (`eslint.config.js`): `eslint-plugin-vue` `flat/recommended` (Vue 3 standard) + `@eslint/js` core recommended rules.
+- Formatting-only rules are disabled (no Prettier; the project keeps its own hand-formatted style): `vue/max-attributes-per-line`, `vue/singleline-html-element-content-newline`, `vue/html-self-closing`, `vue/attributes-order`.
+- Single-word components `App` and `Icon` are allowed (`vue/multi-word-component-names` ignores them).
+- In templates, use **kebab-case** for event names and directive args: `emit('quick-add')` / `@quick-add`, and `v-model:per-kcal` (the matching `defineModel('perKcal')` name stays camelCase).
+- Commands: `npm run lint` (strict, `--max-warnings=0`) and `npm run lint:fix`.
+- CI fails if lint or tests fail — keep both green before pushing.
