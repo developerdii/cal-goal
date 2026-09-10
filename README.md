@@ -33,6 +33,21 @@ npm run preview   # preview the production build
 npm test          # run unit tests
 ```
 
+## Git workflow
+
+- All development happens on **`develop`**. **Never push directly to `main`.**
+- `develop` → `main` is merged **only when the maintainer approves**.
+- `main` is the production branch — pushing to it triggers the GitHub Pages deploy.
+
+```bash
+git checkout develop
+# ... make changes ...
+git add -A && git commit -m "type: description"
+git push origin develop
+```
+
+When a batch of work is ready to ship, the maintainer merges `develop` into `main`.
+
 ## Deploy
 
 Hosted on GitHub Pages; deploys are handled by

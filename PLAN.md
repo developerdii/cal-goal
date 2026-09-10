@@ -4,6 +4,12 @@ A web app for tracking daily calorie intake. Starts as an MVP (manual entry) but
 architected so it can later grow into API-based automatic calorie calculation and a
 real database backend.
 
+## Git Workflow
+
+- All development happens on **`develop`**; **never push directly to `main`**.
+- `develop` → `main` is merged only when the maintainer approves.
+- `main` is production (GitHub Pages deploys on push to `main`).
+
 ## Tech Stack
 
 - **Vue 3** (Composition API + `<script setup>`)
