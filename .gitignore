@@ -8,3 +8,6 @@ coverage
 .env
 .env.*
 !.env.example
+
+# VS Code settings
+.vscode/
