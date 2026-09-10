@@ -14,3 +14,8 @@ This repo uses a `develop` → `main` flow. Apply it to every task, including co
 - One logical change per commit.
 - Push only to `origin develop`.
 - Before finishing a task, run `npm test` and `npm run build`; both must pass.
+
+## Keep `.clinerules/` in sync
+- `.clinerules/*.md` is the living source of truth for how I understand this project. Keep it accurate.
+- Whenever the app changes (new feature, data model, schema, store, util, route, or convention), update the relevant `.clinerules/*.md` file **in the same change**.
+- Before merging `develop` → `main`, re-read `.clinerules/` against the actual code and fix any rule that no longer matches (schema, stores, utils, routes, tech stack, domain math).
