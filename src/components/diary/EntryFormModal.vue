@@ -220,7 +220,7 @@ function submit() {
     const amount = Number(form.amount)
     const perKcal = Number(form.perKcal)
     const quantity = Number(effectiveQuantity.value)
-    const calories = resolveKcal(amount, perKcal, quantity)
+    const calories = servingTotal.value
 
     emit('save', {
       name,
