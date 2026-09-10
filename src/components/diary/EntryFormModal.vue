@@ -1,13 +1,14 @@
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
-import { REFERENCE_UNITS, DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
-import { resolveKcal } from '@/utils/nutrition'
+import { DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
 import { formatKcal } from '@/utils/format'
+import { useServingCalc } from '@/composables/useServingCalc'
 import { useFoodsStore } from '@/stores/foodsStore'
 import SavedFoodsPicker from '@/components/diary/SavedFoodsPicker.vue'
 import SavedFoodsModal from '@/components/diary/SavedFoodsModal.vue'
+import ServingFields from '@/components/diary/ServingFields.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -44,22 +45,21 @@ const title = computed(() => {
   return props.entry ? t('entry.editTitle') : t('entry.addTitle')
 })
 
-const referenceAmountText = computed(
-  () => String(form.amount).trim() || String(defaultServingAmount(form.unit)),
-)
-const effectiveQuantity = computed(
-  () => String(form.quantity).trim() || referenceAmountText.value,
+const { referenceAmountText, effectiveQuantity, total: servingTotal } = useServingCalc(
+  toRef(form, 'unit'),
+  toRef(form, 'amount'),
+  toRef(form, 'perKcal'),
+  toRef(form, 'quantity'),
 )
 
 const total = computed(() => {
   if (form.mode === 'amount') {
     if (isLibrary.value) return Number(form.perKcal) || 0
-    return resolveKcal(form.amount, form.perKcal, effectiveQuantity.value)
+    return servingTotal.value
   }
   return Number(form.calories) || 0
 })
 
-const quantityUnitLabel = computed(() => t(unitLabelKey(form.unit, effectiveQuantity.value)))
 const amountSummary = computed(() => {
   const value = form.mode === 'amount'
     ? (isLibrary.value ? referenceAmountText.value : effectiveQuantity.value)
@@ -75,12 +75,6 @@ const hasValidTotal = computed(() => {
 const totalText = computed(() =>
   hasValidTotal.value ? `${formatKcal(total.value, locale)} kcal` : t('form.totalHint'),
 )
-
-function onUnitChange() {
-  form.amount = String(defaultServingAmount(form.unit))
-  form.quantity = ''
-  if (String(form.perKcal).trim() !== '') form.perKcal = ''
-}
 
 watch(
   () => props.open,
@@ -252,8 +246,6 @@ const inputClass =
   'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 const numInputClass =
   'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
-const unitSelectClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 const cardClass =
   'rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/50'
 const cardHeadingClass = 'text-[13px] font-medium text-slate-500 dark:text-slate-400'
@@ -310,46 +302,17 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
         </button>
       </div>
 
-      <!-- Card A: this food (serving mode) -->
-      <div v-if="form.mode === 'amount'" class="space-y-2" :class="cardClass">
-        <p :class="cardHeadingClass">{{ t('form.thisFood') }}</p>
-
-        <div>
-          <div :class="fieldGridClass">
-            <input
-              v-model="form.amount"
-              type="number"
-              inputmode="decimal"
-              min="0.1"
-              step="any"
-              :placeholder="String(defaultServingAmount(form.unit))"
-              :class="numInputClass"
-            />
-            <select v-model="form.unit" :class="unitSelectClass" @change="onUnitChange">
-              <option v-for="code in REFERENCE_UNITS" :key="code" :value="code">
-                {{ t(`units.${code}`) }}
-              </option>
-            </select>
-          </div>
-          <p v-if="errors.amount" class="mt-1 text-xs text-rose-500">{{ errors.amount }}</p>
-        </div>
-
-        <div>
-          <div :class="fieldGridClass">
-            <input
-              v-model="form.perKcal"
-              type="number"
-              inputmode="numeric"
-              min="1"
-              step="1"
-              :placeholder="t('form.perKcalPlaceholder')"
-              :class="numInputClass"
-            />
-            <span :class="unitSuffixClass">kcal</span>
-          </div>
-          <p v-if="errors.perKcal" class="mt-1 text-xs text-rose-500">{{ errors.perKcal }}</p>
-        </div>
-      </div>
+      <!-- Serving fields (this food + how much you ate) -->
+      <ServingFields
+        v-if="form.mode === 'amount'"
+        density="comfortable"
+        v-model:unit="form.unit"
+        v-model:amount="form.amount"
+        v-model:perKcal="form.perKcal"
+        v-model:quantity="form.quantity"
+        :show-amount-eaten="!isLibrary"
+        :errors="errors"
+      />
 
       <!-- Single calories field (total mode) -->
       <div v-else class="space-y-2" :class="cardClass">
@@ -369,27 +332,6 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
             <span :class="unitSuffixClass">kcal</span>
           </div>
           <p v-if="errors.calories" class="mt-1 text-xs text-rose-500">{{ errors.calories }}</p>
-        </div>
-      </div>
-
-      <!-- Card B: how much you ate -->
-      <div v-if="form.mode === 'amount' && !isLibrary" class="space-y-2" :class="cardClass">
-        <p :class="cardHeadingClass">{{ t('form.howMuchAte') }}</p>
-
-        <div>
-          <div :class="fieldGridClass">
-            <input
-              v-model="form.quantity"
-              type="number"
-              inputmode="decimal"
-              min="0.1"
-              step="any"
-              :placeholder="referenceAmountText"
-              :class="numInputClass"
-            />
-            <span :class="unitSuffixClass">{{ quantityUnitLabel }}</span>
-          </div>
-          <p v-if="errors.quantity" class="mt-1 text-xs text-rose-500">{{ errors.quantity }}</p>
         </div>
       </div>
 

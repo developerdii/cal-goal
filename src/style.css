@@ -52,7 +52,7 @@ input[type='number'] {
 /* Custom checkbox (replaces the native control) */
 @layer components {
   .custom-checkbox {
-    @apply h-[18px] w-[18px] shrink-0 cursor-pointer appearance-none rounded-lg border bg-transparent transition-colors;
+    @apply h-[18px] w-[18px] shrink-0 cursor-pointer appearance-none rounded border bg-transparent transition-colors;
     @apply border-slate-300 ring-offset-white dark:border-slate-700 dark:ring-offset-slate-900;
   }
 
