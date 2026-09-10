@@ -106,6 +106,11 @@ function saveLocal(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 }
 
+function clearLocal() {
+  if (typeof localStorage === 'undefined') return
+  localStorage.removeItem(STORAGE_KEY)
+}
+
 // ---- cloud backend ----
 async function loadCloud(uid) {
   const { data, error } = await supabase
@@ -186,16 +191,17 @@ async function init(user) {
     if (remote) {
       state = remote
     } else if (hasMeaningfulLocalData(loadLocal())) {
-      // First sign-in: migrate the existing guest data to the cloud.
+      // First sign-in: migrate the guest data to the cloud ONCE, then clear
+      // the local store so it isn't migrated again on later log-ins.
       state = loadLocal()
+      await saveCloud(user.id, state)
+      clearLocal()
     } else {
       state = createDefaultData()
+      await saveCloud(user.id, state)
     }
     mode = 'cloud'
     userId = user.id
-    if (!remote) {
-      await saveCloud(user.id, state)
-    }
     return state
   }
 
