@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
       >
         {{ initials }}
       </span>
-      <Icon v-else name="gear" class="h-5 w-5 text-slate-500 dark:text-slate-400" />
+      <Icon v-else name="sliders" class="h-5 w-5 text-slate-500 dark:text-slate-400" />
       <span
         v-if="auth.isAuthenticated"
         class="hidden max-w-[9rem] truncate text-sm font-medium sm:inline"
@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
           <RouterLink
             to="/settings"
             role="menuitem"
-            class="flex items-center px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            class="flex items-center justify-end px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
             @click="closeMenu()"
           >
             {{ t('nav.settings') }}
@@ -229,7 +229,7 @@ onBeforeUnmount(() => {
             type="button"
             role="menuitem"
             :disabled="signingOut"
-            class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-rose-600 transition-colors hover:bg-rose-50 disabled:opacity-60 dark:text-rose-400 dark:hover:bg-rose-950"
+            class="flex w-full items-center justify-end gap-2 px-4 py-2 text-sm text-rose-600 transition-colors hover:bg-rose-50 disabled:opacity-60 dark:text-rose-400 dark:hover:bg-rose-950"
             @click="signOut"
           >
             <span
