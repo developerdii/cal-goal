@@ -1,14 +1,16 @@
 # Git Workflow
 
-This project uses a `develop` → `main` flow. Apply it to every task, including commits and pushes.
+This repo uses a `develop` → `main` flow. Apply it to every task, including commits and pushes.
 
-## Branch rules
-- All work happens on the **`develop`** branch. If you find yourself on `main`, switch to `develop` first.
+## Branches
+- All work happens on **`develop`**. If you find yourself on `main`, switch to `develop` first.
 - **Never push directly to `main`.**
-- `develop` → `main` is merged **only when the maintainer explicitly approves** it. Do not do this on your own.
-- `main` is the production branch — pushing to it triggers the GitHub Pages deploy.
+- `develop` → `main` is merged **only when the maintainer explicitly approves**. Never do it unprompted.
+- `main` is production — pushing to it triggers the GitHub Pages deploy (`.github/workflows/deploy.yml`).
+- Remote: `origin` → `github.com:developerdii/cal-goal.git`. Branches: `develop` (dev), `main` (production).
 
-## Commits
-- Use conventional commit prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`.
+## Commits & pushes
+- Conventional prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`.
 - One logical change per commit.
-- Before finishing a task, run `npm test` and `npm run build` and confirm both pass.
+- Push only to `origin develop`.
+- Before finishing a task, run `npm test` and `npm run build`; both must pass.
