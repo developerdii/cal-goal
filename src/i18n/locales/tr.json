@@ -101,7 +101,8 @@
     "weightChange": "Tahmini kilo değişimi",
     "estimatedWeightHint": "7.000 kcal ≈ 1 kg varsayımına göre",
     "noData": "Bu hafta kayıt yok",
-    "upcoming": "Gelecek"
+    "upcoming": "Gelecek",
+    "inProgress": "Devam ediyor"
   },
   "entry": {
     "name": "Ad",

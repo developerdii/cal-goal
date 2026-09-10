@@ -101,7 +101,8 @@
     "weightChange": "Estimated weight change",
     "estimatedWeightHint": "Based on the assumption 7,000 kcal ≈ 1 kg",
     "noData": "No entries logged this week",
-    "upcoming": "Upcoming"
+    "upcoming": "Upcoming",
+    "inProgress": "In progress"
   },
   "entry": {
     "name": "Name",

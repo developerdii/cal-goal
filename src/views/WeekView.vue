@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDiaryStore } from '@/stores/diaryStore'
 import { useSettingsStore } from '@/stores/settingsStore'
-import { addDays, startOfDay } from '@/utils/date'
+import { addDays, startOfDay, toDateKey } from '@/utils/date'
 import { buildWeekRows, realizedBalance, projectedWeightChange } from '@/utils/analysis'
 import {
   formatKcal,
@@ -19,9 +19,10 @@ const settings = useSettingsStore()
 const { t, locale } = useI18n()
 
 const anchor = ref(startOfDay(new Date()))
+const todayKey = toDateKey(new Date())
 
 const rows = computed(() =>
-  buildWeekRows((key) => diary.totalForDay(key), settings.dailyTarget, anchor.value),
+  buildWeekRows((key) => diary.totalForDay(key), settings.dailyTarget, anchor.value, todayKey),
 )
 
 const totalBalance = computed(() => realizedBalance(rows.value))
@@ -98,13 +99,28 @@ const arrowClass =
           :class="
             r.isFuture
               ? 'border-slate-100 bg-slate-50/60 opacity-60 dark:border-slate-800/60 dark:bg-slate-900/40'
-              : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+              : r.isToday
+                ? 'border-emerald-300 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-900/10'
+                : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
           "
         >
           <div class="min-w-0">
-            <p class="text-sm font-medium">{{ formatDayMedium(r.date, locale) }}</p>
+            <div class="flex items-center gap-1.5">
+              <p class="text-sm font-medium">{{ formatDayMedium(r.date, locale) }}</p>
+              <span
+                v-if="r.isToday"
+                class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+              >
+                {{ t('common.today') }}
+              </span>
+            </div>
             <p class="text-xs text-slate-400">
-              {{ r.isFuture ? t('week.upcoming') : `${formatKcal(r.consumed, locale)} kcal` }}
+              <template v-if="r.isFuture">{{ t('week.upcoming') }}</template>
+              <template v-else-if="r.isToday">
+                {{ formatKcal(r.consumed, locale) }} /
+                {{ formatKcal(settings.dailyTarget, locale) }} kcal
+              </template>
+              <template v-else>{{ formatKcal(r.consumed, locale) }} kcal</template>
             </p>
           </div>
           <span
@@ -112,6 +128,12 @@ const arrowClass =
             class="text-sm font-semibold text-slate-300 dark:text-slate-600"
           >
             —
+          </span>
+          <span
+            v-else-if="r.isToday"
+            class="text-xs font-medium text-amber-600 dark:text-amber-400"
+          >
+            {{ t('week.inProgress') }}
           </span>
           <span v-else class="text-sm font-semibold" :class="balanceClass(r.balance)">
             {{ formatSignedKcal(r.balance, locale) }}
