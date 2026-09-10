@@ -13,7 +13,7 @@ const auth = useAuthStore()
     class="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
   >
     <div class="flex w-full items-center justify-between gap-3 px-4 py-3">
-      <div class="flex min-w-0 items-center gap-2.5">
+      <RouterLink to="/" class="flex min-w-0 items-center gap-2.5">
         <span class="text-2xl leading-none">🔥</span>
         <div class="min-w-0">
           <h1 class="truncate text-base font-bold leading-tight">{{ t('app.title') }}</h1>
@@ -21,7 +21,7 @@ const auth = useAuthStore()
             {{ t('app.tagline') }}
           </p>
         </div>
-      </div>
+      </RouterLink>
       <div class="flex shrink-0 items-center gap-2">
         <RouterLink
           v-if="!auth.isAuthenticated"
