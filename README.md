@@ -1,23 +1,42 @@
-# CalGoal
+# 🔥 CalGoal
 
-**🌐 Live app:** [https://developerdii.github.io/cal-goal/](https://developerdii.github.io/cal-goal/)
+**Track your daily intake. Hit your goal. Simple, private, and free.**
 
-A web app for tracking daily calorie intake. MVP focused on manual entry, built so it can
-grow into API-based automatic calorie calculation and a real database backend.
+A beautiful, mobile-first web app for logging what you eat and staying on top of your
+calorie goals — with weekly insights, a saved-foods library, and optional sync across devices.
 
-## Features
+> **🌐 Try it live → [developerdii.github.io/cal-goal](https://developerdii.github.io/cal-goal/)**
+>
+> No sign-up required — it works instantly in your browser, and your data stays on your
+> device until you choose to sync.
 
-- **Daily tracking** — add, edit, and delete entries per day (single foods or grouped meals)
-- **Foods library** — save foods/groups as favorites and quick-add them later
-- **Per-unit calories** — log by amount (e.g. "100 g = 110 kcal") and enter a quantity to auto-calculate
-- **Weekly navigation** — move between days and weeks (Mon–Sun)
-- **Over/under indicator** — see how far each day is from the goal
-- **Weekly analysis** — total surplus/deficit + estimated weight change (7,000 kcal ≈ 1 kg); future days are disabled and excluded from the balance
-- **History** — previous weeks are preserved and remain viewable
-- **Settings** — daily calorie goal, current weight, and a reset-all-data action
-- **i18n** — Turkish & English, switchable from the UI
-- **Theming** — dark / light (system-aware default, no flash)
-- **Responsive** — mobile-first layout
+## Why CalGoal?
+
+- **Zero setup** — open it and start logging. No account, no paywall, no onboarding.
+- **Private by default** — everything lives in your browser's local storage. Only if you
+  sign in does your data sync to the cloud.
+- **Fast & focused** — built for quick daily logging, not for wrestling with spreadsheets.
+- **Works everywhere** — a responsive web app that runs on any device, desktop or mobile.
+
+## ✨ Features
+
+- 🍽️ **Log anything in seconds** — add foods one by one or bundle them into meals (e.g. "Breakfast").
+- ⚖️ **Per-unit calories** — enter "100 g = 110 kcal", then type how much you ate; it does the math.
+- ⭐ **Foods library** — save your go-to foods and meals, then quick-add them in one tap.
+- 🎯 **Goal tracking** — instantly see if you're under or over your daily target.
+- 📊 **Weekly analysis** — total surplus/deficit plus an estimated weight change (7,000 kcal ≈ 1 kg).
+- 📅 **History preserved** — jump between days and weeks; nothing is ever lost.
+- 🌙 **Dark mode** — auto / light / dark, no flash.
+- 🌍 **Turkish & English** — switchable from the UI.
+- 🔄 **Optional cloud sync** — sign in to sync across devices (Supabase).
+
+## 🚀 Try it now
+
+1. Open **[developerdii.github.io/cal-goal](https://developerdii.github.io/cal-goal/)**.
+2. Tap **"Add entry"** and log your first food.
+3. Set your daily goal in **Settings**.
+
+That's it — your data is saved locally and survives refreshes.
 
 ## Tech
 
