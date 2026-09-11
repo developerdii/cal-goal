@@ -21,6 +21,7 @@
 ```
 - `normalize()` in `storageService.js` applies defaults + migrates old fields (`calorieGoal` → maintenance + `maintain`).
 - Saved foods may carry `favorite: true`; favorites sort first in the library and in the saved-items pickers.
+- Saved groups store items like diary groups; measured items may carry `quantity` (a default eaten amount, pre-filled when the group is edited or quick-added).
 - Week starts **Monday**, derived from date keys; history is implicit (days keyed by date, never deleted).
 
 ## Supabase schema — `supabase/schema.sql`

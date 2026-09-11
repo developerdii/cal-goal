@@ -216,7 +216,7 @@ function itemValid(it) {
   const perKcal = Number(it.perKcal)
   if (String(it.amount).trim() === '' || !Number.isFinite(amount) || amount <= 0) return false
   if (String(it.perKcal).trim() === '' || !Number.isFinite(perKcal) || perKcal <= 0) return false
-  if (!isLibrary.value && String(it.quantity).trim() !== '') {
+  if (String(it.quantity).trim() !== '') {
     const q = Number(it.quantity)
     if (!Number.isFinite(q) || q <= 0) return false
   }
@@ -269,7 +269,7 @@ function submit() {
         unit: it.unit,
         amount,
         perKcal,
-        quantity: isLibrary.value ? null : quantity,
+        quantity,
       }
     }
     return {
@@ -306,7 +306,6 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
           :items="allGroups"
           :meta="groupMeta"
           :create-label="(q) => t('foods.createGroup', { query: q })"
-          storage-key="group.groups"
           @quick-add="onQuickAddGroup"
           @select="fillFromSavedGroup"
           @create="onCreateGroup"
@@ -392,7 +391,6 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
               v-model:amount="it.amount"
               v-model:per-kcal="it.perKcal"
               v-model:quantity="it.quantity"
-              :show-amount-eaten="!isLibrary"
             />
           </div>
         </div>
@@ -405,7 +403,6 @@ const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center
             :meta="foodMeta"
             :create-label="(q) => t('foods.createFood', { query: q })"
             :show-select="false"
-            storage-key="group.foods"
             @quick-add="addFoodFromSaved"
             @create="onCreateFood"
           />

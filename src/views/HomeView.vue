@@ -7,6 +7,7 @@ import { useFoodsStore } from '@/stores/foodsStore'
 import { toDateKey, parseDateKey, addDays, getWeekDays } from '@/utils/date'
 import { formatDayLong, formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
+import { resolveKcal } from '@/utils/nutrition'
 import WeekStrip from '@/components/diary/WeekStrip.vue'
 import DaySummary from '@/components/diary/DaySummary.vue'
 import EntryList from '@/components/diary/EntryList.vue'
@@ -84,7 +85,7 @@ function toGroupDefinition(payload) {
     name: payload.name,
     items: payload.items.map((it) =>
       it.unit
-        ? { name: it.name, unit: it.unit, amount: it.amount, perKcal: it.perKcal }
+        ? { name: it.name, unit: it.unit, amount: it.amount, perKcal: it.perKcal, quantity: it.quantity ?? null }
         : { name: it.name, calories: it.calories },
     ),
   }
@@ -125,11 +126,12 @@ function onQuickAddGroup(food) {
     name: food.name,
     items: (food.items || []).map((it) => {
       const measured = !!it.unit
+      const quantity = measured ? (it.quantity ?? it.amount) : null
       return {
         id: createId(),
         name: it.name,
-        calories: measured ? Number(it.perKcal) : Number(it.calories),
-        quantity: measured ? it.amount : null,
+        calories: measured ? resolveKcal(it.amount, it.perKcal, quantity) : Number(it.calories),
+        quantity,
         unit: it.unit ?? null,
         amount: measured ? it.amount : null,
         perKcal: measured ? it.perKcal : null,
