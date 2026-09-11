@@ -101,7 +101,7 @@ function onSaveGroup(payload) {
     name: payload.name,
     items: payload.items.map((it) =>
       it.unit
-        ? { name: it.name, unit: it.unit, amount: it.amount, perKcal: it.perKcal }
+        ? { name: it.name, unit: it.unit, amount: it.amount, perKcal: it.perKcal, quantity: it.quantity ?? null }
         : { name: it.name, calories: it.calories },
     ),
   })

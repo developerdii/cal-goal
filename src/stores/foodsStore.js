@@ -56,7 +56,23 @@ export const useFoodsStore = defineStore('foods', () => {
     return [...list.filter((f) => f.favorite), ...list.filter((f) => !f.favorite)]
   }
 
-  // Flips a food's `favorite` flag and persists it.
+  const FAVORITE_DEBOUNCE_MS = 300
+  let favoriteTimer = null
+  const pendingFavorites = new Set()
+
+  // Writes every favorite toggle that is still waiting out its debounce window.
+  function flushPendingFavorites() {
+    const ids = [...pendingFavorites]
+    pendingFavorites.clear()
+    for (const id of ids) {
+      const food = foods.value.find((f) => f.id === id)
+      if (food) storageService.saveFood(food)
+    }
+  }
+
+  // Flips a food's `favorite` flag. The in-memory state changes immediately so
+  // the UI feels instant, but persistence is debounced so a burst of rapid taps
+  // collapses into a single write instead of one write per tap.
   function toggleFavorite(id) {
     let updated = null
     foods.value = foods.value.map((f) => {
@@ -64,7 +80,14 @@ export const useFoodsStore = defineStore('foods', () => {
       updated = { ...f, favorite: !f.favorite }
       return updated
     })
-    if (updated) storageService.saveFood(updated)
+    if (updated) {
+      pendingFavorites.add(id)
+      if (favoriteTimer) clearTimeout(favoriteTimer)
+      favoriteTimer = setTimeout(() => {
+        favoriteTimer = null
+        flushPendingFavorites()
+      }, FAVORITE_DEBOUNCE_MS)
+    }
     return updated ? updated.favorite : false
   }
 

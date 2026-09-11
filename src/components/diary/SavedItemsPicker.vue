@@ -2,14 +2,12 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/ui/Icon.vue'
-import { storageService } from '@/services/storageService'
 
 const props = defineProps({
   label: { type: String, required: true },
   items: { type: Array, default: () => [] },
   meta: { type: Function, required: true },
   createLabel: { type: Function, required: true },
-  storageKey: { type: String, required: true },
   showSelect: { type: Boolean, default: true },
 })
 
@@ -17,7 +15,7 @@ const emit = defineEmits(['quick-add', 'select', 'create'])
 
 const { t } = useI18n()
 
-const open = ref(storageService.getPref(`picker.${props.storageKey}`) === true)
+const open = ref(false)
 const query = ref('')
 const searchInput = ref(null)
 
@@ -51,10 +49,6 @@ const rowGridClass = computed(() =>
     : 'grid h-10 grid-cols-[20px_minmax(0,1fr)_auto_30px] items-center gap-2',
 )
 
-watch(open, (value) => {
-  storageService.setPref(`picker.${props.storageKey}`, value)
-})
-
 function onKeydown(e) {
   if (e.key === 'Escape' && open.value) {
     e.stopPropagation()
@@ -77,14 +71,25 @@ watch(open, async (isOpen) => {
   }
 })
 
-function onSelect(item) {
+function reset() {
   open.value = false
+  query.value = ''
+}
+
+function onSelect(item) {
+  reset()
   emit('select', item)
 }
 
+function onQuickAdd(item) {
+  reset()
+  emit('quick-add', item)
+}
+
 function onCreate() {
-  open.value = false
-  emit('create', query.value.trim())
+  const q = query.value.trim()
+  reset()
+  emit('create', q)
 }
 </script>
 
@@ -170,7 +175,7 @@ function onCreate() {
             class="flex h-[30px] w-[30px] items-center justify-center rounded-md bg-emerald-500 text-white transition-colors hover:bg-emerald-600"
             :title="t('foods.quickAdd')"
             :aria-label="t('foods.quickAdd')"
-            @click="emit('quick-add', item)"
+            @click="onQuickAdd(item)"
           >
             <Icon name="plus" class="h-4 w-4" />
           </button>
