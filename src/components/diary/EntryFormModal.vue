@@ -264,7 +264,6 @@ const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
           :items="allFoods"
           :meta="foodMeta"
           :create-label="(q) => t('foods.createFood', { query: q })"
-          storage-key="entry.foods"
           @quick-add="onQuickAdd"
           @select="fillFromSaved"
           @create="onCreateFood"
