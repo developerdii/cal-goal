@@ -60,6 +60,17 @@ input[type='number'] {
   transform: translateY(-0.25rem);
 }
 
+/* Toast transition */
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(0.5rem);
+}
+
 /* Custom checkbox (replaces the native control) */
 @layer components {
   .custom-checkbox {

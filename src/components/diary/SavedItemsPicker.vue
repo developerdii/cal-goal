@@ -31,9 +31,12 @@ function normalize(s) {
 }
 
 const sorted = computed(() =>
-  [...props.items].sort((a, b) =>
-    String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }),
-  ),
+  [...props.items].sort((a, b) => {
+    const fa = a.favorite ? 1 : 0
+    const fb = b.favorite ? 1 : 0
+    if (fa !== fb) return fb - fa
+    return String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' })
+  }),
 )
 
 const filtered = computed(() => {
@@ -154,7 +157,12 @@ function onCreate() {
           class="border-b-[0.5px] border-slate-200 last:border-b-0 dark:border-slate-800"
           :class="rowGridClass"
         >
-          <Icon name="star" class="h-4 w-4 text-slate-400" />
+          <Icon
+            :name="item.favorite ? 'starSolid' : 'star'"
+            :solid="item.favorite"
+            class="h-4 w-4"
+            :class="item.favorite ? 'text-amber-400' : 'text-slate-400'"
+          />
           <span class="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{{ item.name }}</span>
           <span class="whitespace-nowrap text-[13px] text-slate-500 dark:text-slate-400">{{ meta(item) }}</span>
           <button
