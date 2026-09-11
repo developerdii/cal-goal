@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed, watch, nextTick } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import Icon from '@/components/ui/Icon.vue'
@@ -8,14 +8,14 @@ import { resolveKcal, resolveQuantity } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
 import { useFoodsStore } from '@/stores/foodsStore'
-import SavedItemsPicker from '@/components/diary/SavedItemsPicker.vue'
-import ServingFields from '@/components/diary/ServingFields.vue'
+import ItemEditor from '@/components/diary/ItemEditor.vue'
+import SavedItemsDropdown from '@/components/diary/SavedItemsDropdown.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
-  group: { type: Object, default: null }, // diary group (edit)
-  food: { type: Object, default: null }, // library group (edit)
-  context: { type: String, default: 'log' }, // 'log' | 'library'
+  group: { type: Object, default: null },
+  food: { type: Object, default: null },
+  context: { type: String, default: 'log' },
 })
 
 const emit = defineEmits(['close', 'save', 'delete', 'quick-add-group'])
@@ -24,23 +24,23 @@ const { t, locale } = useI18n()
 
 const isLibrary = computed(() => props.context === 'library')
 const foodsStore = useFoodsStore()
-const allGroups = computed(() => foodsStore.all('group'))
 const allFoods = computed(() => foodsStore.all('food'))
+const allGroups = computed(() => foodsStore.all('group'))
 const nameInput = ref(null)
-const itemNameInputs = ref([])
 
 const form = reactive({ name: '', items: [] })
 const saveToFoods = ref(false)
 const errors = reactive({ name: '', items: '' })
+const openId = ref(null)
 
 function emptyItem() {
   return {
     id: createId(),
     name: '',
-    mode: 'kcal',
+    mode: 'amount',
     calories: '',
     unit: DEFAULT_UNIT,
-    amount: '',
+    amount: String(defaultServingAmount(DEFAULT_UNIT)),
     perKcal: '',
     quantity: '',
   }
@@ -79,6 +79,7 @@ watch(
     form.name = src?.name ?? ''
     form.items = (src?.items || []).map(fromSource)
     if (form.items.length === 0) form.items.push(emptyItem())
+    openId.value = form.items[0]?.id ?? null
     saveToFoods.value = false
     errors.name = ''
     errors.items = ''
@@ -92,34 +93,24 @@ watch(
   },
 )
 
-const title = computed(() => {
+const eyebrow = computed(() => {
   if (isLibrary.value) return props.food ? t('foods.editGroupTitle') : t('foods.addGroupTitle')
   return props.group ? t('group.editTitle') : t('group.addTitle')
 })
 
 function addItem() {
-  form.items.push(emptyItem())
+  const it = emptyItem()
+  form.items.push(it)
+  openId.value = it.id
 }
 
-function toggleServing(it) {
-  if (it.mode === 'amount') {
-    it.mode = 'kcal'
-  } else {
-    it.mode = 'amount'
-    if (String(it.amount).trim() === '') {
-      it.amount = String(defaultServingAmount(it.unit))
-    }
-  }
+function toggleItem(id) {
+  openId.value = openId.value === id ? null : id
 }
 
 function removeItem(id) {
   form.items = form.items.filter((it) => it.id !== id)
-  if (form.items.length === 0) form.items.push(emptyItem())
-}
-
-function fillFromSavedGroup(food) {
-  form.name = food.name
-  form.items = (food.items || []).map(fromSource)
+  if (openId.value === id) openId.value = null
   if (form.items.length === 0) form.items.push(emptyItem())
 }
 
@@ -139,46 +130,46 @@ function applyFoodToItem(it, food) {
 
 function foodMeta(food) {
   if (food.unit) {
-    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale)} kcal`
+    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale.value)} kcal`
   }
-  return `${formatKcal(food.calories, locale)} kcal`
-}
-
-function groupMeta(group) {
-  const total = (group.items || []).reduce(
-    (s, it) => s + (it.unit ? Number(it.perKcal) : Number(it.calories)),
-    0,
-  )
-  const n = (group.items || []).length
-  return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')} · ${formatKcal(total, locale)} kcal`
+  return `${formatKcal(food.calories, locale.value)} kcal`
 }
 
 function addFoodFromSaved(food) {
   const it = emptyItem()
   applyFoodToItem(it, food)
   form.items.push(it)
-}
-
-function onQuickAddGroup(group) {
-  emit('quick-add-group', group)
-}
-
-function onCreateGroup(query) {
-  form.name = query
-  nameInput.value?.focus()
+  openId.value = it.id
 }
 
 function onCreateFood(query) {
   const it = emptyItem()
   it.name = query
   form.items.push(it)
-  nextTick(() => {
-    itemNameInputs.value[form.items.length - 1]?.focus()
-  })
+  openId.value = it.id
 }
 
-function setItemNameRef(el, index) {
-  if (el) itemNameInputs.value[index] = el
+function groupMeta(food) {
+  const items = food.items || []
+  const total = items.reduce((sum, it) => sum + (Number(it.calories) || 0), 0)
+  const n = items.length
+  return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')} · ${formatKcal(total, locale.value)} kcal`
+}
+
+function fillFromSavedGroup(food) {
+  form.name = food.name
+  form.items = (food.items || []).map(fromSource)
+  if (form.items.length === 0) form.items.push(emptyItem())
+  openId.value = form.items[0]?.id ?? null
+}
+
+function onQuickAddGroup(food) {
+  emit('quick-add-group', food)
+}
+
+function onCreateGroup(query) {
+  form.name = query
+  nameInput.value?.focus()
 }
 
 function itemTotal(it) {
@@ -204,7 +195,6 @@ const itemCountText = computed(() => {
   const n = filledItems.value.length
   return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')}`
 })
-const footerCountText = computed(() => `${t('form.total')} · ${itemCountText.value}`)
 
 function itemValid(it) {
   if (!it.name.trim()) return false
@@ -252,10 +242,7 @@ function submit() {
     nameInput.value?.focus()
     return
   }
-  if (!validate()) {
-    if (errors.items) itemNameInputs.value[0]?.focus()
-    return
-  }
+  if (!validate()) return
 
   const items = form.items.filter(isFilled).map((it) => {
     if (it.mode === 'amount') {
@@ -289,162 +276,94 @@ function submit() {
     saveToFoods: isLibrary.value ? false : saveToFoods.value,
   })
 }
-
-const inputClass =
-  'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
-const compactInputClass =
-  'rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
-const rowGridClass = 'grid grid-cols-[minmax(0,1fr)_96px_32px_32px] items-center gap-2'
 </script>
 
 <template>
-  <BaseModal :open="open" :title="title" @close="emit('close')">
-    <form id="group-form" class="space-y-3" @submit.prevent="submit">
-      <div v-if="!isLibrary && !group">
-        <SavedItemsPicker
-          :label="t('foods.chooseFromGroups')"
-          :items="allGroups"
-          :meta="groupMeta"
-          :create-label="(q) => t('foods.createGroup', { query: q })"
-          @quick-add="onQuickAddGroup"
-          @select="fillFromSavedGroup"
-          @create="onCreateGroup"
+  <BaseModal :open="open" :eyebrow="eyebrow" @close="emit('close')">
+    <template #title>
+      <input
+        ref="nameInput"
+        v-model="form.name"
+        type="text"
+        :placeholder="t('group.namePlaceholder')"
+        class="w-full border-b border-transparent bg-transparent pb-1.5 text-[22px] font-bold text-slate-900 outline-none transition-colors placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 dark:text-slate-50 dark:hover:border-slate-700"
+      />
+      <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
+    </template>
+
+    <div class="-mx-5 mb-3 flex items-baseline justify-between gap-3 border-b border-slate-200 bg-slate-50 px-5 py-2.5 dark:border-slate-800 dark:bg-slate-800/40">
+      <span class="text-[13px] text-slate-500 dark:text-slate-400">{{ itemCountText }}</span>
+      <span class="flex items-baseline gap-1.5">
+        <span class="font-mono text-lg font-medium tabular-nums" :class="hasUsableTotal ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'">
+          {{ formatKcal(groupTotal, locale) }}
+        </span>
+        <span class="text-[13px] text-slate-500 dark:text-slate-400">{{ t('form.kcalTotal') }}</span>
+      </span>
+    </div>
+
+    <div v-if="!isLibrary && !group && allGroups.length" class="mb-3">
+      <SavedItemsDropdown
+        :label="t('foods.savedGroups')"
+        :items="allGroups"
+        :meta="groupMeta"
+        :create-label="(q) => t('foods.createGroup', { query: q })"
+        selectable
+        placement="down"
+        @quick-add="onQuickAddGroup"
+        @select="fillFromSavedGroup"
+        @create="onCreateGroup"
+      />
+    </div>
+
+    <form id="group-form" class="space-y-2" @submit.prevent="submit">
+      <div class="space-y-2">
+        <ItemEditor
+          v-for="it in form.items"
+          :key="it.id"
+          collapsible
+          :open="openId === it.id"
+          :name-placeholder="t('entry.namePlaceholder')"
+          v-model:name="it.name"
+          v-model:mode="it.mode"
+          v-model:calories="it.calories"
+          v-model:unit="it.unit"
+          v-model:amount="it.amount"
+          v-model:per-kcal="it.perKcal"
+          v-model:quantity="it.quantity"
+          @toggle="toggleItem(it.id)"
+          @remove="removeItem(it.id)"
         />
       </div>
-
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('group.name') }}
-        </label>
-        <input
-          ref="nameInput"
-          v-model="form.name"
-          type="text"
-          :placeholder="t('group.namePlaceholder')"
-          class="w-full"
-          :class="inputClass"
-        />
-        <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
-      </div>
-
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('group.items') }}
-        </label>
-        <p class="mb-2 text-[13px] text-slate-500 dark:text-slate-400">
-          {{ t('group.servingHint') }}
-        </p>
-
-        <div>
-          <div
-            v-for="(it, index) in form.items"
-            :key="it.id"
-            class="border-b-[0.5px] border-slate-200 py-2.5 first:pt-0 last:border-b-0 dark:border-slate-800"
-          >
-            <div :class="rowGridClass">
-              <input
-                v-model="it.name"
-                type="text"
-                :placeholder="t('entry.namePlaceholder')"
-                class="min-w-0"
-                :class="compactInputClass"
-                :ref="(el) => setItemNameRef(el, index)"
-              />
-              <input
-                v-if="it.mode === 'kcal'"
-                v-model="it.calories"
-                type="number"
-                inputmode="numeric"
-                min="1"
-                step="1"
-                placeholder="kcal"
-                class="text-right"
-                :class="compactInputClass"
-              />
-              <div v-else></div>
-              <button
-                type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
-                :class="it.mode === 'amount'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
-                  : 'border-slate-300 text-slate-400 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-500 dark:hover:text-emerald-400'"
-                :title="t('form.calcFromServingSize')"
-                :aria-label="t('form.calcFromServingSize')"
-                @click="toggleServing(it)"
-              >
-                <Icon name="calculator" class="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950 dark:hover:text-rose-400"
-                aria-label="Remove item"
-                @click="removeItem(it.id)"
-              >
-                <Icon name="close" class="h-4 w-4" />
-              </button>
-            </div>
-
-            <ServingFields
-              v-if="it.mode === 'amount'"
-              density="compact"
-              v-model:unit="it.unit"
-              v-model:amount="it.amount"
-              v-model:per-kcal="it.perKcal"
-              v-model:quantity="it.quantity"
-            />
-          </div>
-        </div>
-
-        <div class="mt-2 flex items-start justify-end gap-1.5">
-          <SavedItemsPicker
-            class="min-w-0 flex-1"
-            :label="t('foods.chooseFromFoods')"
-            :items="allFoods"
-            :meta="foodMeta"
-            :create-label="(q) => t('foods.createFood', { query: q })"
-            :show-select="false"
-            @quick-add="addFoodFromSaved"
-            @create="onCreateFood"
-          />
-          <button
-            type="button"
-            class="flex h-10 shrink-0 items-center gap-1 rounded-md bg-emerald-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
-            @click="addItem"
-          >
-            <Icon name="plus" class="h-4 w-4" />
-            {{ t('group.addItem') }}
-          </button>
-        </div>
-
-        <div class="mt-2 flex items-baseline justify-between gap-2 border-t border-slate-200 pt-2 dark:border-slate-800">
-          <span class="text-sm text-slate-500 dark:text-slate-400">
-            {{ footerCountText }}
-          </span>
-          <span
-            :class="hasUsableTotal
-              ? 'text-base font-medium text-slate-800 dark:text-slate-100'
-              : 'text-sm text-slate-500 dark:text-slate-400'"
-          >
-            {{ hasUsableTotal ? `${formatKcal(groupTotal, locale)} kcal` : t('group.totalHint') }}
-          </span>
-        </div>
-        <p v-if="errors.items" class="mt-1 text-xs text-rose-500">{{ errors.items }}</p>
-      </div>
+      <p v-if="errors.items" class="mt-1 text-xs text-rose-500">{{ errors.items }}</p>
     </form>
 
     <template #footer>
-      <label
-        v-if="!isLibrary"
-        class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
-      >
-        <input
-          v-model="saveToFoods"
-          type="checkbox"
-          class="custom-checkbox"
-        />
+      <div class="relative">
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            class="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-emerald-500 dark:hover:text-emerald-400"
+            @click="addItem"
+          >
+            <Icon name="plus" class="h-4 w-4" />
+            {{ t('form.blankItem') }}
+          </button>
+          <SavedItemsDropdown
+            :items="allFoods"
+            :meta="foodMeta"
+            :create-label="(q) => t('foods.createFood', { query: q })"
+            @quick-add="addFoodFromSaved"
+            @create="onCreateFood"
+          />
+        </div>
+      </div>
+
+      <label v-if="!isLibrary" class="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+        <input v-model="saveToFoods" type="checkbox" class="custom-checkbox" />
         <span>{{ t('form.saveToFoods') }}</span>
       </label>
-      <div class="flex gap-2 pt-2">
+
+      <div class="mt-2 flex items-center gap-2">
         <button
           v-if="group || food"
           type="button"

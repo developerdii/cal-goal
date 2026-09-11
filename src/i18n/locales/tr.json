@@ -186,12 +186,11 @@
     "glass": "bardak"
   },
   "form": {
-    "modeKcal": "Toplam kaloriyi gir",
     "modeAmount": "Miktar",
-    "modeServing": "Porsiyona göre hesapla",
-    "calcFromServingSize": "Porsiyon boyutuna göre hesapla",
-    "thisFood": "Bu besin",
-    "howMuchAte": "Ne kadar yedin",
+    "perServing": "Porsiyon başına",
+    "directKcal": "Direkt kcal",
+    "per": "Başına",
+    "iAte": "Yedim",
     "perKcalPlaceholder": "örn. 89",
     "servingSize": "Porsiyon boyutu",
     "calories": "Kalori",
@@ -203,6 +202,11 @@
     "saveToFoods": "Besinlerime kaydet",
     "toAmount": "Miktara göre ölç",
     "toKcal": "Direkt kalori gir",
+    "blankItem": "Boş öğe",
+    "savedFoods": "Kayıtlı besinler",
+    "kcalTotal": "kcal toplam",
+    "removeItem": "Öğeyi kaldır",
+    "details": "Detaylar",
     "validation": {
       "amountRequired": "Lütfen bir porsiyon boyutu girin.",
       "amountPositive": "Porsiyon boyutu sıfırdan büyük olmalıdır.",

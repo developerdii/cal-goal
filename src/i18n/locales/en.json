@@ -186,12 +186,11 @@
     "glass": "glasses"
   },
   "form": {
-    "modeKcal": "Enter total calories",
     "modeAmount": "Amount",
-    "modeServing": "Calculate from serving",
-    "calcFromServingSize": "Calculate from serving size",
-    "thisFood": "This food",
-    "howMuchAte": "How much you ate",
+    "perServing": "Per serving",
+    "directKcal": "Direct kcal",
+    "per": "Per",
+    "iAte": "I ate",
     "perKcalPlaceholder": "e.g. 89",
     "servingSize": "Serving size",
     "calories": "Calories",
@@ -203,6 +202,11 @@
     "saveToFoods": "Save to my foods",
     "toAmount": "Measure by amount",
     "toKcal": "Enter calories directly",
+    "blankItem": "Blank item",
+    "savedFoods": "Saved foods",
+    "kcalTotal": "kcal total",
+    "removeItem": "Remove item",
+    "details": "Details",
     "validation": {
       "amountRequired": "Please enter a serving size.",
       "amountPositive": "Serving size must be greater than zero.",
