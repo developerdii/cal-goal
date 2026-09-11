@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
-import { resolveKcal, resolveQuantity } from '@/utils/nutrition'
+import { resolveKcal, resolveQuantity, resolveItemKcal } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
 import { createId } from '@/utils/id'
 import { useFoodsStore } from '@/stores/foodsStore'
@@ -135,23 +135,33 @@ function foodMeta(food) {
   return `${formatKcal(food.calories, locale.value)} kcal`
 }
 
+// Inserts a prepared item, filling the single still-empty placeholder row
+// (which the modal opens with) instead of appending another row the user
+// would then have to delete.
+function insertItem(it) {
+  if (form.items.length === 1 && !isFilled(form.items[0])) {
+    form.items = [it]
+  } else {
+    form.items.push(it)
+  }
+  openId.value = it.id
+}
+
 function addFoodFromSaved(food) {
   const it = emptyItem()
   applyFoodToItem(it, food)
-  form.items.push(it)
-  openId.value = it.id
+  insertItem(it)
 }
 
 function onCreateFood(query) {
   const it = emptyItem()
   it.name = query
-  form.items.push(it)
-  openId.value = it.id
+  insertItem(it)
 }
 
 function groupMeta(food) {
   const items = food.items || []
-  const total = items.reduce((sum, it) => sum + (Number(it.calories) || 0), 0)
+  const total = items.reduce((sum, it) => sum + resolveItemKcal(it), 0)
   const n = items.length
   return `${n} ${n === 1 ? t('foods.itemCountOne') : t('foods.itemCount')} · ${formatKcal(total, locale.value)} kcal`
 }
@@ -342,11 +352,11 @@ function submit() {
         <div class="grid grid-cols-2 gap-2">
           <button
             type="button"
-            class="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-emerald-500 dark:hover:text-emerald-400"
+            class="flex items-center justify-center gap-1.5 rounded-xl border border-[#2c4658] bg-[#16293a] px-3 py-2.5 text-sm font-medium text-[#cfdde6] transition-colors hover:border-[#3d5f77] hover:bg-[#1e364a]"
             @click="addItem"
           >
             <Icon name="plus" class="h-4 w-4" />
-            {{ t('form.blankItem') }}
+            {{ t('form.newFood') }}
           </button>
           <SavedItemsDropdown
             :items="allFoods"

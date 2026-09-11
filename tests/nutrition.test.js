@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolveKcal } from '@/utils/nutrition'
+import { resolveKcal, resolveItemKcal } from '@/utils/nutrition'
 
 describe('nutrition utils', () => {
   it('resolves calories from a reference amount', () => {
@@ -19,6 +19,19 @@ describe('nutrition utils', () => {
   it('guards against a non-positive reference amount', () => {
     expect(resolveKcal(0, 110, 100)).toBe(0)
     expect(resolveKcal(-5, 110, 100)).toBe(0)
+  })
+
+  it('resolves measured saved items to their eaten calories (quantity defaults to amount)', () => {
+    expect(resolveItemKcal({ unit: 'g', amount: 100, perKcal: 391 })).toBe(391)
+    expect(resolveItemKcal({ unit: 'ml', amount: 140, perKcal: 58 })).toBe(58)
+    expect(resolveItemKcal({ unit: 'g', amount: 100, perKcal: 346, quantity: 55 })).toBe(190)
+  })
+
+  it('resolves direct-calorie items and guards against missing input', () => {
+    expect(resolveItemKcal({ calories: 105 })).toBe(105)
+    expect(resolveItemKcal({ calories: 0 })).toBe(0)
+    expect(resolveItemKcal(null)).toBe(0)
+    expect(resolveItemKcal(undefined)).toBe(0)
   })
 })
 

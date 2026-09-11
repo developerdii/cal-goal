@@ -49,6 +49,23 @@ function foodMeta(food) {
   return `${formatKcal(food.calories, locale.value)} kcal`
 }
 
+// Live total shown at the top-right of the title, mirroring the group modal's
+// per-item header total.
+const total = computed(() => {
+  if (form.mode === 'kcal') return Number(form.calories) || 0
+  return resolveKcal(
+    form.amount,
+    form.perKcal,
+    resolveQuantity(form.amount, form.quantity, form.unit),
+  )
+})
+const totalLabel = computed(() =>
+  total.value > 0 ? `${formatKcal(total.value, locale.value)} kcal` : `— kcal`,
+)
+const totalColor = computed(() =>
+  total.value > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500',
+)
+
 function clearErrors() {
   errors.name = ''
   errors.calories = ''
@@ -217,13 +234,16 @@ function submit() {
 <template>
   <BaseModal :open="open" :eyebrow="eyebrow" @close="emit('close')">
     <template #title>
-      <input
-        ref="nameInput"
-        v-model="form.name"
-        type="text"
-        :placeholder="t('entry.namePlaceholder')"
-        class="w-full border-b border-transparent bg-transparent pb-1.5 text-[22px] font-bold text-slate-900 outline-none transition-colors placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 dark:text-slate-50 dark:hover:border-slate-700"
-      />
+      <div class="flex items-center gap-2">
+        <input
+          ref="nameInput"
+          v-model="form.name"
+          type="text"
+          :placeholder="t('entry.namePlaceholder')"
+          class="min-w-0 flex-1 border-b border-transparent bg-transparent pb-1.5 text-[22px] font-bold text-slate-900 outline-none transition-colors placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 dark:text-slate-50 dark:hover:border-slate-700"
+        />
+        <span class="shrink-0 font-mono text-[15px] tabular-nums" :class="totalColor">{{ totalLabel }}</span>
+      </div>
       <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
     </template>
 

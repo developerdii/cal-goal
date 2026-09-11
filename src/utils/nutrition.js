@@ -18,3 +18,18 @@ export function resolveKcal(amount, perKcal, quantity) {
   return Math.round((Number(quantity) / a) * Number(perKcal))
 }
 
+// Resolves the total kcal for a saved food/group item of either shape:
+// measured (unit/amount/perKcal, with quantity defaulting to the reference
+// amount) or direct (`calories`). Used for library summaries and saved-group
+// metadata so measured items show their real eaten calories, not 0.
+export function resolveItemKcal(item) {
+  if (item && item.unit) {
+    return resolveKcal(
+      item.amount,
+      item.perKcal,
+      resolveQuantity(item.amount, item.quantity, item.unit),
+    )
+  }
+  return Number(item?.calories) || 0
+}
+

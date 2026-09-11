@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useFoodsStore } from '@/stores/foodsStore'
 import { formatKcal } from '@/utils/format'
 import { unitLabelKey } from '@/utils/units'
+import { resolveItemKcal } from '@/utils/nutrition'
 import EntryFormModal from '@/components/diary/EntryFormModal.vue'
 import GroupFormModal from '@/components/diary/GroupFormModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
@@ -124,10 +125,7 @@ function confirmDelete() {
 
 function summary(food) {
   if (food.type === 'group') {
-    const total = (food.items || []).reduce(
-      (s, it) => s + (it.unit ? Number(it.perKcal) : Number(it.calories)),
-      0,
-    )
+    const total = (food.items || []).reduce((s, it) => s + resolveItemKcal(it), 0)
     return `${formatKcal(total, locale)} kcal · ${(food.items || []).length} ${t('foods.itemCount')}`
   }
   if (food.unit) {
@@ -166,7 +164,7 @@ function summary(food) {
         v-model="query"
         type="search"
         :placeholder="t('foods.searchPlaceholder')"
-        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800"
+        class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
 
       <ul v-if="filteredFoods.length" class="space-y-2">
