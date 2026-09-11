@@ -11,7 +11,7 @@ components → Pinia stores → storageService → localStorage (guest) | Supaba
   - `appStore` — locale + theme prefs.
   - `settingsStore` — maintenance calories, goal type, goal amount, current weight; exposes computed `dailyTarget`.
   - `diaryStore` — days keyed by date; entries (`item`/`group`); `totalForDay()`.
-  - `foodsStore` — saved foods/groups library; `upsert` (by id or name+type), `recent()`, `all()`.
+  - `foodsStore` — saved foods/groups library; `upsert` (by id or name+type), `recent()`, `all()`, `toggleFavorite()`, `sorted()` (favorites sort first).
   - `authStore` — Supabase auth: `signUp/signIn/signOut/resetPassword/updatePassword`, `onAuthStateChange`.
 - **`src/utils/`** — pure, unit-tested logic: `date`, `analysis`, `format`, `id`, `units`, `nutrition`, `authErrors`.
 - **`src/composables/`** — `useTheme` (resolve/apply theme), `useServingCalc` (shared serving math).
