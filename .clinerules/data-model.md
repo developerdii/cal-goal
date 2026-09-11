@@ -38,5 +38,5 @@
 - `dailyBalance = consumed − goal` (negative = under).
 - Weekly balance = Σ `dailyBalance` over **completed days only** (today + future excluded; see `analysis.js`).
 - Estimated weight change (kg) = Σ(consumed − maintenance) / 7000, completed days only.
-- Serving (`utils/nutrition.js`): `resolveKcal = round((quantity / amount) * perKcal)`; `resolveQuantity` falls back to the reference amount.
+- Serving (`utils/nutrition.js`): `resolveKcal = round((quantity / amount) * perKcal)`; `resolveQuantity` falls back to the reference amount; `resolveItemKcal` resolves a saved item's kcal (measured or direct) for library summaries.
 - Units are language-agnostic codes (`utils/units.js`); labels via i18n `units.*` / `unitsPlural.*`.

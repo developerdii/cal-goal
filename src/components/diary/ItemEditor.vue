@@ -28,7 +28,7 @@ const quantity = defineModel('quantity', { type: [String, Number], default: '' }
 
 const { t, locale } = useI18n()
 
-const { referenceAmountText, quantityUnitLabel, total, hasValidTotal, changeUnit } = useServingCalc(
+const { referenceAmountText, quantityUnitLabel, total, changeUnit } = useServingCalc(
   unit,
   amount,
   perKcal,
@@ -40,7 +40,12 @@ const kcalLabel = computed(() =>
   kcal.value > 0 ? `${formatKcal(kcal.value, locale.value)} kcal` : `— kcal`,
 )
 const kcalColor = computed(() =>
-  kcal.value > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500',
+  props.open && kcal.value > 0
+    ? 'text-emerald-600 dark:text-emerald-400'
+    : 'text-slate-400 dark:text-slate-500',
+)
+const nameColor = computed(() =>
+  props.open ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-100',
 )
 
 const nameInput = ref(null)
@@ -82,7 +87,8 @@ const selectClass =
         v-model="name"
         type="text"
         :placeholder="namePlaceholder"
-        class="min-w-0 flex-1 bg-transparent px-1 py-1.5 text-[15px] font-medium text-slate-800 outline-none placeholder:text-slate-400 dark:text-slate-100"
+        class="min-w-0 flex-1 bg-transparent px-1 py-1.5 text-[15px] font-medium outline-none placeholder:text-slate-400"
+        :class="nameColor"
       />
       <span class="shrink-0 font-mono text-[15px] tabular-nums" :class="kcalColor">{{ kcalLabel }}</span>
       <button
@@ -100,22 +106,33 @@ const selectClass =
       v-if="!collapsible || open"
       :class="showName ? 'border-t border-slate-100 px-3 pb-3 pt-2.5 dark:border-slate-800' : ''"
     >
-      <div class="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+      <div class="flex items-center gap-2">
+        <div class="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+          <button
+            type="button"
+            class="rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors"
+            :class="mode === 'amount' ? 'bg-white text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
+            @click="setAmount"
+          >
+            {{ t('form.perServing') }}
+          </button>
+          <button
+            type="button"
+            class="rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors"
+            :class="mode === 'kcal' ? 'bg-white text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
+            @click="setDirect"
+          >
+            {{ t('form.directKcal') }}
+          </button>
+        </div>
         <button
+          v-if="removable"
           type="button"
-          class="rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors"
-          :class="mode === 'amount' ? 'bg-white text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
-          @click="setAmount"
+          class="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-300 text-slate-400 transition-colors hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 dark:border-slate-700 dark:hover:border-rose-800 dark:hover:bg-rose-950 dark:hover:text-rose-400"
+          :aria-label="t('form.removeItem')"
+          @click="emit('remove')"
         >
-          {{ t('form.perServing') }}
-        </button>
-        <button
-          type="button"
-          class="rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors"
-          :class="mode === 'kcal' ? 'bg-white text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-100' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'"
-          @click="setDirect"
-        >
-          {{ t('form.directKcal') }}
+          <Icon name="trash" class="h-4 w-4" />
         </button>
       </div>
 
@@ -163,9 +180,6 @@ const selectClass =
             :class="numClass"
           />
           <span class="text-[13px] text-slate-500 dark:text-slate-400">{{ quantityUnitLabel }}</span>
-          <span class="ml-auto font-mono text-sm tabular-nums" :class="hasValidTotal ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'">
-            {{ hasValidTotal ? `${formatKcal(total, locale)} kcal` : `— kcal` }}
-          </span>
         </div>
         <p v-if="errors.quantity" class="text-xs text-rose-500">{{ errors.quantity }}</p>
       </div>
@@ -185,16 +199,6 @@ const selectClass =
           <span class="text-[13px] text-slate-500 dark:text-slate-400">kcal</span>
         </div>
         <p v-if="errors.calories" class="text-xs text-rose-500">{{ errors.calories }}</p>
-      </div>
-
-      <div v-if="removable" class="mt-2.5 flex justify-end border-t border-slate-100 pt-2 dark:border-slate-800">
-        <button
-          type="button"
-          class="rounded-md px-2 py-1 text-[13px] text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-slate-400 dark:hover:bg-rose-950 dark:hover:text-rose-400"
-          @click="emit('remove')"
-        >
-          {{ t('form.removeItem') }}
-        </button>
       </div>
     </div>
   </div>

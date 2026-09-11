@@ -50,8 +50,26 @@ async function reloadData(user) {
   applyAppPrefs()
 }
 
-let currentUserId = null
+let currentUserId = undefined // sentinel: not yet loaded (guest is `null`)
 let unsubscribeAuth = null
+
+// Loads (or reloads) the persisted document for `user`, skipping no-op loads
+// for the user that is already active. Both the auth listener and the boot
+// path call this. Supabase fires INITIAL_SESSION asynchronously right after
+// onAuthStateChange() registers, so without this guard the boot path would
+// call storageService.init() a second time for the same user — doubling the
+// cloud read and re-writing the document once more on the way in.
+async function loadForUser(user) {
+  const nextId = user?.id ?? null
+  if (nextId === currentUserId) return
+  currentUserId = nextId
+  ready.value = false
+  try {
+    await reloadData(user)
+  } finally {
+    ready.value = true
+  }
+}
 
 function onVisibilityChange() {
   if (document.visibilityState === 'hidden') storageService.flush()
@@ -73,15 +91,7 @@ onMounted(async () => {
   // Register the auth listener before the initial load so a forced sign-out
   // (e.g. a failed cloud load) is handled consistently from the very start.
   unsubscribeAuth = authStore.onAuthStateChange(async (_event, user) => {
-    const nextId = user?.id ?? null
-    if (nextId === currentUserId) return
-    currentUserId = nextId
-    ready.value = false
-    try {
-      await reloadData(user)
-    } finally {
-      ready.value = true
-    }
+    await loadForUser(user)
   })
 
   await authStore.init()
@@ -95,9 +105,7 @@ onMounted(async () => {
     window.history.replaceState(null, '', window.location.pathname + window.location.search)
   }
 
-  currentUserId = authStore.user?.id ?? null
-  await reloadData(authStore.user)
-  ready.value = true
+  await loadForUser(authStore.user)
 
   if (isRecovery) {
     await router.replace('/reset-password')
