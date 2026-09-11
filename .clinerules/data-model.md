@@ -16,10 +16,11 @@
   },
   "settings": { "maintenanceCalories": 2000, "goalType": "maintain|deficit|surplus", "goalAmount": 0, "currentWeight": 70 },
   "prefs": { "locale": "en|tr", "theme": "auto|light|dark" },
-  "foods": [ { "id": "uuid", "type": "food|group", "name": "..." } ]
+  "foods": [ { "id": "uuid", "type": "food|group", "name": "...", "favorite": false } ]
 }
 ```
 - `normalize()` in `storageService.js` applies defaults + migrates old fields (`calorieGoal` → maintenance + `maintain`).
+- Saved foods may carry `favorite: true`; favorites sort first in the library and in the saved-items pickers.
 - Week starts **Monday**, derived from date keys; history is implicit (days keyed by date, never deleted).
 
 ## Supabase schema — `supabase/schema.sql`
