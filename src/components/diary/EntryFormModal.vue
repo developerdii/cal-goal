@@ -1,19 +1,19 @@
 <script setup>
-import { reactive, ref, computed, watch, toRef } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { DEFAULT_UNIT, defaultServingAmount, unitLabelKey } from '@/utils/units'
+import { resolveKcal, resolveQuantity } from '@/utils/nutrition'
 import { formatKcal } from '@/utils/format'
-import { useServingCalc } from '@/composables/useServingCalc'
 import { useFoodsStore } from '@/stores/foodsStore'
-import SavedItemsPicker from '@/components/diary/SavedItemsPicker.vue'
-import ServingFields from '@/components/diary/ServingFields.vue'
+import ItemEditor from '@/components/diary/ItemEditor.vue'
+import SavedItemsDropdown from '@/components/diary/SavedItemsDropdown.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
-  entry: { type: Object, default: null }, // diary item (edit, log context)
-  food: { type: Object, default: null }, // library food (edit, library context)
-  context: { type: String, default: 'log' }, // 'log' | 'library'
+  entry: { type: Object, default: null },
+  food: { type: Object, default: null },
+  context: { type: String, default: 'log' },
 })
 
 const emit = defineEmits(['close', 'save', 'delete', 'quick-add'])
@@ -27,7 +27,7 @@ const nameInput = ref(null)
 
 const form = reactive({
   name: '',
-  mode: 'amount', // 'kcal' (total) | 'amount' (serving)
+  mode: 'amount',
   calories: '',
   unit: DEFAULT_UNIT,
   amount: String(defaultServingAmount(DEFAULT_UNIT)),
@@ -37,41 +37,60 @@ const form = reactive({
 const saveToFoods = ref(false)
 const errors = reactive({ name: '', calories: '', amount: '', perKcal: '', quantity: '' })
 
-const title = computed(() => {
+const eyebrow = computed(() => {
   if (isLibrary.value) return props.food ? t('foods.editFoodTitle') : t('foods.addFoodTitle')
-  return props.entry ? t('entry.editTitle') : t('entry.addTitle')
+  return props.entry ? t('entry.editTitle') : t('foods.addFoodTitle')
 })
 
-const { referenceAmountText, effectiveQuantity, total: servingTotal } = useServingCalc(
-  toRef(form, 'unit'),
-  toRef(form, 'amount'),
-  toRef(form, 'perKcal'),
-  toRef(form, 'quantity'),
-)
-
-const total = computed(() => {
-  if (form.mode === 'amount') {
-    if (isLibrary.value) return Number(form.perKcal) || 0
-    return servingTotal.value
+function foodMeta(food) {
+  if (food.unit) {
+    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale.value)} kcal`
   }
-  return Number(form.calories) || 0
-})
+  return `${formatKcal(food.calories, locale.value)} kcal`
+}
 
-const amountSummary = computed(() => {
-  const value = form.mode === 'amount'
-    ? (isLibrary.value ? referenceAmountText.value : effectiveQuantity.value)
-    : ''
-  const v = String(value).trim()
-  if (v === '') return '—'
-  return `${v} ${t(unitLabelKey(form.unit, v))}`
-})
-const hasValidTotal = computed(() => {
-  const v = total.value
-  return Number.isFinite(v) && v > 0
-})
-const totalText = computed(() =>
-  hasValidTotal.value ? `${formatKcal(total.value, locale)} kcal` : t('form.totalHint'),
-)
+function clearErrors() {
+  errors.name = ''
+  errors.calories = ''
+  errors.amount = ''
+  errors.perKcal = ''
+  errors.quantity = ''
+}
+
+function resetForm() {
+  form.name = ''
+  form.mode = 'amount'
+  form.calories = ''
+  form.unit = DEFAULT_UNIT
+  form.amount = String(defaultServingAmount(DEFAULT_UNIT))
+  form.perKcal = ''
+  form.quantity = ''
+  saveToFoods.value = false
+  clearErrors()
+}
+
+function onQuickAdd(food) {
+  emit('quick-add', food)
+}
+
+function fillFromSaved(food) {
+  form.name = food.name
+  if (food.unit) {
+    form.mode = 'amount'
+    form.unit = food.unit
+    form.amount = String(food.amount)
+    form.perKcal = String(food.perKcal)
+    form.quantity = String(food.amount)
+  } else {
+    form.mode = 'kcal'
+    form.calories = String(food.calories)
+  }
+}
+
+function onCreateFood(query) {
+  form.name = query
+  nameInput.value?.focus()
+}
 
 watch(
   () => props.open,
@@ -103,56 +122,6 @@ watch(
     if (errors.name) errors.name = ''
   },
 )
-
-function resetForm() {
-  form.name = ''
-  form.mode = 'amount'
-  form.calories = ''
-  form.unit = DEFAULT_UNIT
-  form.amount = String(defaultServingAmount(DEFAULT_UNIT))
-  form.perKcal = ''
-  form.quantity = ''
-  saveToFoods.value = false
-  clearErrors()
-}
-
-function clearErrors() {
-  errors.name = ''
-  errors.calories = ''
-  errors.amount = ''
-  errors.perKcal = ''
-  errors.quantity = ''
-}
-
-function foodMeta(food) {
-  if (food.unit) {
-    return `${food.amount} ${t(unitLabelKey(food.unit, food.amount))} · ${formatKcal(food.perKcal, locale)} kcal`
-  }
-  return `${formatKcal(food.calories, locale)} kcal`
-}
-
-function fillFromSaved(food) {
-  form.name = food.name
-  if (food.amount != null && food.perKcal != null) {
-    form.mode = 'amount'
-    form.unit = food.unit
-    form.amount = String(food.amount)
-    form.perKcal = String(food.perKcal)
-    form.quantity = String(food.amount)
-  } else {
-    form.mode = 'kcal'
-    form.calories = food.calories != null ? String(food.calories) : ''
-  }
-}
-
-function onQuickAdd(food) {
-  emit('quick-add', food)
-}
-
-function onCreateFood(query) {
-  form.name = query
-  nameInput.value?.focus()
-}
 
 function validate() {
   clearErrors()
@@ -219,8 +188,8 @@ function submit() {
     const unit = form.unit
     const amount = Number(form.amount)
     const perKcal = Number(form.perKcal)
-    const quantity = Number(effectiveQuantity.value)
-    const calories = servingTotal.value
+    const quantity = Number(resolveQuantity(form.amount, form.quantity, form.unit))
+    const calories = resolveKcal(amount, perKcal, quantity)
 
     emit('save', {
       name,
@@ -243,127 +212,56 @@ function submit() {
     })
   }
 }
-
-const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
-const numInputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-right text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
-const cardClass =
-  'rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-800/50'
-const cardHeadingClass = 'text-[13px] font-medium text-slate-500 dark:text-slate-400'
-const fieldGridClass = 'grid grid-cols-[minmax(0,1fr)_108px] items-center gap-2'
-const unitSuffixClass = 'pl-3 text-sm text-slate-500 dark:text-slate-400'
 </script>
 
 <template>
-  <BaseModal :open="open" :title="title" @close="emit('close')">
+  <BaseModal :open="open" :eyebrow="eyebrow" @close="emit('close')">
+    <template #title>
+      <input
+        ref="nameInput"
+        v-model="form.name"
+        type="text"
+        :placeholder="t('entry.namePlaceholder')"
+        class="w-full border-b border-transparent bg-transparent pb-1.5 text-[22px] font-bold text-slate-900 outline-none transition-colors placeholder:font-normal placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 dark:text-slate-50 dark:hover:border-slate-700"
+      />
+      <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
+    </template>
+
     <form id="food-form" class="space-y-3" @submit.prevent="submit">
+      <ItemEditor
+        :show-name="false"
+        :show-amount-eaten="!isLibrary"
+        :removable="false"
+        :errors="errors"
+        v-model:name="form.name"
+        v-model:mode="form.mode"
+        v-model:calories="form.calories"
+        v-model:unit="form.unit"
+        v-model:amount="form.amount"
+        v-model:per-kcal="form.perKcal"
+        v-model:quantity="form.quantity"
+      />
+    </form>
+
+    <template #footer>
       <div v-if="!isLibrary && !entry">
-        <SavedItemsPicker
-          :label="t('foods.chooseFromFoods')"
+        <SavedItemsDropdown
           :items="allFoods"
           :meta="foodMeta"
           :create-label="(q) => t('foods.createFood', { query: q })"
+          selectable
           @quick-add="onQuickAdd"
           @select="fillFromSaved"
           @create="onCreateFood"
         />
       </div>
 
-      <div>
-        <label class="mb-1 block text-sm font-medium text-slate-600 dark:text-slate-300">
-          {{ t('entry.name') }}
-        </label>
-        <input
-          ref="nameInput"
-          v-model="form.name"
-          type="text"
-          :placeholder="t('entry.namePlaceholder')"
-          :class="inputClass"
-        />
-        <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
-      </div>
-
-      <div class="flex overflow-hidden rounded-lg border border-slate-300 text-sm dark:border-slate-700">
-        <button
-          type="button"
-          class="flex-1 px-3 py-2 font-medium transition-colors"
-          :class="form.mode === 'kcal' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-          @click="form.mode = 'kcal'"
-        >
-          {{ t('form.modeKcal') }}
-        </button>
-        <button
-          type="button"
-          class="flex-1 px-3 py-2 font-medium transition-colors"
-          :class="form.mode === 'amount' ? 'bg-emerald-500 text-white' : 'text-slate-600 dark:text-slate-300'"
-          @click="form.mode = 'amount'"
-        >
-          {{ t('form.modeServing') }}
-        </button>
-      </div>
-
-      <!-- Serving fields (this food + how much you ate) -->
-      <ServingFields
-        v-if="form.mode === 'amount'"
-        density="comfortable"
-        v-model:unit="form.unit"
-        v-model:amount="form.amount"
-        v-model:per-kcal="form.perKcal"
-        v-model:quantity="form.quantity"
-        :show-amount-eaten="!isLibrary"
-        :errors="errors"
-      />
-
-      <!-- Single calories field (total mode) -->
-      <div v-else class="space-y-2" :class="cardClass">
-        <p :class="cardHeadingClass">{{ t('form.calories') }}</p>
-
-        <div>
-          <div :class="fieldGridClass">
-            <input
-              v-model="form.calories"
-              type="number"
-              inputmode="numeric"
-              min="1"
-              step="1"
-              :placeholder="t('entry.caloriesPlaceholder')"
-              :class="numInputClass"
-            />
-            <span :class="unitSuffixClass">kcal</span>
-          </div>
-          <p v-if="errors.calories" class="mt-1 text-xs text-rose-500">{{ errors.calories }}</p>
-        </div>
-      </div>
-
-      <!-- Total sentence -->
-      <div v-if="form.mode === 'amount'" class="border-t border-slate-200 pt-3 dark:border-slate-800">
-        <div class="flex items-baseline justify-between gap-2">
-          <span class="text-sm text-slate-500 dark:text-slate-400">{{ amountSummary }}</span>
-          <span
-            :class="hasValidTotal
-              ? 'text-[18px] font-medium leading-none text-slate-800 dark:text-slate-100'
-              : 'text-sm text-slate-500 dark:text-slate-400'"
-          >
-            {{ totalText }}
-          </span>
-        </div>
-      </div>
-    </form>
-
-    <template #footer>
-      <label
-        v-if="!isLibrary"
-        class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300"
-      >
-        <input
-          v-model="saveToFoods"
-          type="checkbox"
-          class="custom-checkbox"
-        />
+      <label v-if="!isLibrary" class="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+        <input v-model="saveToFoods" type="checkbox" class="custom-checkbox" />
         <span>{{ t('form.saveToFoods') }}</span>
       </label>
-      <div class="flex gap-2 pt-2">
+
+      <div class="mt-2 flex items-center gap-2">
         <button
           v-if="entry || food"
           type="button"
