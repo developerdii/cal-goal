@@ -247,6 +247,21 @@ function submit() {
       <p v-if="errors.name" class="mt-1 text-xs text-rose-500">{{ errors.name }}</p>
     </template>
 
+    <template #actions>
+      <SavedItemsDropdown
+        v-if="!isLibrary && !entry"
+        :items="allFoods"
+        :meta="foodMeta"
+        :create-label="(q) => t('foods.createFood', { query: q })"
+        selectable
+        placement="down"
+        :full-width="false"
+        @quick-add="onQuickAdd"
+        @select="fillFromSaved"
+        @create="onCreateFood"
+      />
+    </template>
+
     <form id="food-form" class="space-y-3" @submit.prevent="submit">
       <ItemEditor
         :show-name="false"
@@ -264,24 +279,11 @@ function submit() {
     </form>
 
     <template #footer>
-      <div v-if="!isLibrary && !entry">
-        <SavedItemsDropdown
-          :items="allFoods"
-          :meta="foodMeta"
-          :create-label="(q) => t('foods.createFood', { query: q })"
-          selectable
-          @quick-add="onQuickAdd"
-          @select="fillFromSaved"
-          @create="onCreateFood"
-        />
-      </div>
-
-      <label v-if="!isLibrary" class="mt-3 flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-        <input v-model="saveToFoods" type="checkbox" class="custom-checkbox" />
-        <span>{{ t('form.saveToFoods') }}</span>
-      </label>
-
-      <div class="mt-2 flex items-center gap-2">
+      <div class="flex items-center gap-2">
+        <label v-if="!isLibrary" class="flex cursor-pointer items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+          <input v-model="saveToFoods" type="checkbox" class="custom-checkbox" />
+          <span>{{ t('form.saveToFoods') }}</span>
+        </label>
         <button
           v-if="entry || food"
           type="button"

@@ -11,6 +11,7 @@ const props = defineProps({
   createLabel: { type: Function, required: true },
   selectable: { type: Boolean, default: false },
   placement: { type: String, default: 'up' },
+  fullWidth: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['quick-add', 'select', 'create'])
@@ -143,10 +144,13 @@ onBeforeUnmount(() => {
   <div ref="rootRef">
     <button
       type="button"
-      class="flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors"
-      :class="open
-        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
-        : 'border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-emerald-500 dark:hover:text-emerald-400'"
+      class="flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors"
+      :class="[
+        fullWidth ? 'w-full' : '',
+        open
+          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400'
+          : 'border-slate-300 text-slate-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-emerald-500 dark:hover:text-emerald-400',
+      ]"
       @click="onToggle"
     >
       {{ buttonLabel }}
