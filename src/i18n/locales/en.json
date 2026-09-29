@@ -155,7 +155,41 @@
     "resetTitle": "Reset all data",
     "resetConfirmMessage": "This will delete all entries and restore the default settings. This action cannot be undone.",
     "resetTypeToConfirm": "Type RESET to confirm",
-    "resetAction": "Reset"
+    "resetAction": "Reset",
+    "dataSection": "Data",
+    "dataSectionHint": "Back up or bulk-import your diary.",
+    "exportTitle": "Export diary",
+    "exportDescription": "Copy your logged days as JSON.",
+    "exportAction": "Export",
+    "importTitle": "Import diary",
+    "importDescription": "Paste JSON to bulk-add days.",
+    "importAction": "Import"
+  },
+  "data": {
+    "rangeLabel": "Range",
+    "rangeAll": "All records",
+    "rangeCustom": "Custom range",
+    "fromLabel": "From",
+    "toLabel": "To",
+    "copy": "Copy",
+    "copied": "Copied",
+    "noData": "No diary data to export yet.",
+    "dayCountOne": "{count} day",
+    "dayCount": "{count} days",
+    "entryCountOne": "{count} entry",
+    "entryCount": "{count} entries",
+    "importHint": "Paste the JSON you exported. Days that already exist are replaced.",
+    "importPlaceholder": "{ \"days\": { \"2026-09-29\": { \"date\": \"2026-09-29\", \"entries\": [] } } }",
+    "modeMerge": "Merge",
+    "modeReplace": "Replace all",
+    "modeReplaceHint": "This replaces all your existing diary days.",
+    "imported": "Imported",
+    "errors": {
+      "empty": "Paste some JSON first.",
+      "invalidJson": "That doesn't look like valid JSON.",
+      "invalidFormat": "The JSON doesn't match the diary format.",
+      "noDays": "No diary days were found in the pasted data."
+    }
   },
   "units": {
     "g": "g",

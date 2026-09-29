@@ -155,7 +155,41 @@
     "resetTitle": "Tüm verileri sıfırla",
     "resetConfirmMessage": "Tüm kayıtlar silinecek ve ayarlar varsayılana dönecek. Bu işlem geri alınamaz.",
     "resetTypeToConfirm": "Onaylamak için RESET yazın",
-    "resetAction": "Sıfırla"
+    "resetAction": "Sıfırla",
+    "dataSection": "Veri",
+    "dataSectionHint": "Günlüğünüzü yedekleyin veya toplu olarak içe aktarın.",
+    "exportTitle": "Günlüğü dışa aktar",
+    "exportDescription": "Kayıtlı günlerinizi JSON olarak kopyalayın.",
+    "exportAction": "Dışa aktar",
+    "importTitle": "Günlüğü içe aktar",
+    "importDescription": "JSON yapıştırarak toplu gün ekleyin.",
+    "importAction": "İçe aktar"
+  },
+  "data": {
+    "rangeLabel": "Aralık",
+    "rangeAll": "Tüm kayıtlar",
+    "rangeCustom": "Özel aralık",
+    "fromLabel": "Başlangıç",
+    "toLabel": "Bitiş",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı",
+    "noData": "Dışa aktarılacak günlük verisi henüz yok.",
+    "dayCountOne": "{count} gün",
+    "dayCount": "{count} gün",
+    "entryCountOne": "{count} kayıt",
+    "entryCount": "{count} kayıt",
+    "importHint": "Dışa aktardığınız JSON'u yapıştırın. Var olan günler değiştirilir.",
+    "importPlaceholder": "{ \"days\": { \"2026-09-29\": { \"date\": \"2026-09-29\", \"entries\": [] } } }",
+    "modeMerge": "Birleştir",
+    "modeReplace": "Tümünü değiştir",
+    "modeReplaceHint": "Mevcut tüm günlük günleriniz değiştirilir.",
+    "imported": "İçe aktarıldı",
+    "errors": {
+      "empty": "Önce bir JSON yapıştırın.",
+      "invalidJson": "Bu geçerli bir JSON gibi görünmüyor.",
+      "invalidFormat": "JSON, günlük biçimiyle eşleşmiyor.",
+      "noDays": "Yapıştırılan veride günlük günü bulunamadı."
+    }
   },
   "units": {
     "g": "g",

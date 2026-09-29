@@ -227,6 +227,11 @@ export const storageService = {
     data.days = {}
     scheduleSave()
   },
+  saveDays(days) {
+    const data = ensureState()
+    data.days = clone(days)
+    scheduleSave()
+  },
 
   // ---- Settings ----
   getSettings() {
