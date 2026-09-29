@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { useDiaryStore } from '@/stores/diaryStore'
@@ -17,7 +17,8 @@ const diary = useDiaryStore()
 
 const text = ref('')
 const errorMessage = ref('')
-const success = ref(null) // { entryCount }
+const toast = ref('')
+let toastTimer = null
 
 const ERROR_KEYS = {
   empty: 'data.errors.empty',
@@ -32,18 +33,23 @@ watch(
     if (!open) return
     text.value = ''
     errorMessage.value = ''
-    success.value = null
   },
 )
 
-const entryCountText = computed(() => {
-  const n = success.value?.entryCount ?? 0
+function entryCountText(n) {
   return n === 1 ? t('data.entryCountOne', { count: n }) : t('data.entryCount', { count: n })
-})
+}
+
+function showToast(message) {
+  toast.value = message
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toast.value = ''
+  }, 1800)
+}
 
 function doImport() {
   errorMessage.value = ''
-  success.value = null
 
   let entries
   try {
@@ -54,7 +60,8 @@ function doImport() {
   }
 
   diary.setEntries(props.dateKey, entries)
-  success.value = { entryCount: entries.length }
+  showToast(`✓ ${t('data.imported')} ${entryCountText(entries.length)}`)
+  emit('close')
   text.value = ''
 }
 </script>
@@ -72,10 +79,6 @@ function doImport() {
 
       <p v-if="errorMessage" class="text-xs text-rose-600 dark:text-rose-400">
         {{ errorMessage }}
-      </p>
-
-      <p v-if="success" class="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-        ✓ {{ t('data.imported') }} {{ entryCountText }}
       </p>
     </div>
 
@@ -98,4 +101,16 @@ function doImport() {
       </div>
     </template>
   </BaseModal>
+
+  <Teleport to="body">
+    <Transition name="toast">
+      <div v-if="toast" class="fixed inset-x-0 bottom-24 z-[60] flex justify-center px-4">
+        <div
+          class="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg dark:bg-slate-100 dark:text-slate-900"
+        >
+          {{ toast }}
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
