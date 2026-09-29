@@ -5,6 +5,10 @@ import Icon from '@/components/ui/Icon.vue'
 import ExportModal from '@/components/data/ExportModal.vue'
 import ImportModal from '@/components/data/ImportModal.vue'
 
+defineProps({
+  dateKey: { type: String, required: true },
+})
+
 const { t } = useI18n()
 
 const open = ref(false)
@@ -83,7 +87,7 @@ function openImport() {
       </div>
     </Transition>
 
-    <ExportModal :open="exportOpen" @close="exportOpen = false" />
-    <ImportModal :open="importOpen" @close="importOpen = false" />
+    <ExportModal :open="exportOpen" :date-key="dateKey" @close="exportOpen = false" />
+    <ImportModal :open="importOpen" :date-key="dateKey" @close="importOpen = false" />
   </div>
 </template>

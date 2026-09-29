@@ -159,28 +159,23 @@
   },
   "data": {
     "menuLabel": "More options",
-    "exportTitle": "Export diary",
-    "importTitle": "Import diary",
+    "exportTitle": "Export day",
+    "importTitle": "Import day",
     "exportAction": "Export",
     "importAction": "Import",
     "copy": "Copy",
     "copied": "Copied",
-    "noData": "No diary data to export yet.",
-    "dayCountOne": "{count} day",
-    "dayCount": "{count} days",
+    "noData": "No entries logged for this day.",
     "entryCountOne": "{count} entry",
     "entryCount": "{count} entries",
-    "importHint": "Paste the JSON you exported. Days that already exist are replaced.",
-    "importPlaceholder": "{ \"days\": { \"2026-09-29\": { \"date\": \"2026-09-29\", \"entries\": [] } } }",
-    "modeMerge": "Merge",
-    "modeReplace": "Replace all",
-    "modeReplaceHint": "This replaces all your existing diary days.",
+    "importHint": "Paste the JSON for one day. The selected day's entries are replaced.",
+    "importPlaceholder": "{ \"entries\": [ { \"name\": \"Banana\", \"calories\": 105 } ] }",
     "imported": "Imported",
     "errors": {
       "empty": "Paste some JSON first.",
       "invalidJson": "That doesn't look like valid JSON.",
       "invalidFormat": "The JSON doesn't match the diary format.",
-      "noDays": "No diary days were found in the pasted data."
+      "noEntries": "No entries were found in the pasted data."
     }
   },
   "units": {
