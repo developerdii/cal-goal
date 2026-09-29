@@ -14,23 +14,11 @@ const emit = defineEmits(['close'])
 const { t } = useI18n()
 const diary = useDiaryStore()
 
-const rangeMode = ref('all') // 'all' | 'custom'
-const fromKey = ref('')
-const toKey = ref('')
 const copied = ref(false)
 let copiedTimer = null
 
-const dateKeys = computed(() => Object.keys(diary.days).sort())
-const hasData = computed(() => dateKeys.value.length > 0)
-const minKey = computed(() => dateKeys.value[0] ?? '')
-const maxKey = computed(() => dateKeys.value[dateKeys.value.length - 1] ?? '')
-
-const exportDoc = computed(() =>
-  buildExportDoc(diary.days, {
-    fromKey: rangeMode.value === 'custom' ? fromKey.value || null : null,
-    toKey: rangeMode.value === 'custom' ? toKey.value || null : null,
-  }),
-)
+const hasData = computed(() => Object.keys(diary.days).length > 0)
+const exportDoc = computed(() => buildExportDoc(diary.days))
 
 const exportText = computed(() => JSON.stringify(exportDoc.value, null, 2))
 const dayCount = computed(() => Object.keys(exportDoc.value.days).length)
@@ -52,9 +40,6 @@ watch(
   (open) => {
     if (!open) return
     copied.value = false
-    rangeMode.value = 'all'
-    fromKey.value = ''
-    toKey.value = ''
   },
 )
 
@@ -79,65 +64,15 @@ async function copy() {
   clearTimeout(copiedTimer)
   copiedTimer = setTimeout(() => (copied.value = false), 1500)
 }
-
-const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 dark:border-slate-700 dark:bg-slate-800'
 </script>
 
 <template>
-  <BaseModal :open="open" :title="t('settings.exportTitle')" @close="emit('close')">
+  <BaseModal :open="open" :title="t('data.exportTitle')" @close="emit('close')">
     <p v-if="!hasData" class="py-4 text-center text-sm text-slate-500 dark:text-slate-400">
       {{ t('data.noData') }}
     </p>
 
     <div v-else class="space-y-4">
-      <div>
-        <label class="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">
-          {{ t('data.rangeLabel') }}
-        </label>
-        <div class="flex overflow-hidden rounded-lg border border-slate-300 text-xs dark:border-slate-700">
-          <button
-            type="button"
-            class="flex-1 px-2 py-2 font-medium transition-colors"
-            :class="
-              rangeMode === 'all'
-                ? 'bg-emerald-500 text-white'
-                : 'text-slate-600 dark:text-slate-300'
-            "
-            @click="rangeMode = 'all'"
-          >
-            {{ t('data.rangeAll') }}
-          </button>
-          <button
-            type="button"
-            class="flex-1 px-2 py-2 font-medium transition-colors"
-            :class="
-              rangeMode === 'custom'
-                ? 'bg-emerald-500 text-white'
-                : 'text-slate-600 dark:text-slate-300'
-            "
-            @click="rangeMode = 'custom'"
-          >
-            {{ t('data.rangeCustom') }}
-          </button>
-        </div>
-      </div>
-
-      <div v-if="rangeMode === 'custom'" class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">
-            {{ t('data.fromLabel') }}
-          </label>
-          <input v-model="fromKey" type="date" :min="minKey" :max="toKey || maxKey" :class="inputClass" />
-        </div>
-        <div>
-          <label class="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">
-            {{ t('data.toLabel') }}
-          </label>
-          <input v-model="toKey" type="date" :min="fromKey || minKey" :max="maxKey" :class="inputClass" />
-        </div>
-      </div>
-
       <p class="text-xs text-slate-500 dark:text-slate-400">
         {{ dayCountText }} · {{ entryCountText }}
       </p>

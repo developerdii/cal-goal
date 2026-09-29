@@ -15,6 +15,7 @@ import EntryFormModal from '@/components/diary/EntryFormModal.vue'
 import GroupFormModal from '@/components/diary/GroupFormModal.vue'
 import AddEntryModal from '@/components/diary/AddEntryModal.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import DataMenu from '@/components/data/DataMenu.vue'
 import Icon from '@/components/ui/Icon.vue'
 
 const diary = useDiaryStore()
@@ -190,13 +191,16 @@ const arrowClass =
     <DaySummary :consumed="consumed" :goal="goal" />
 
     <section>
-      <div class="mb-2 flex items-center justify-between">
+      <div class="mb-2 flex items-center justify-between gap-2">
         <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">
           {{ t('home.entriesTitle') }}
         </h3>
-        <span class="text-sm text-slate-500 dark:text-slate-400">
-          {{ formatKcal(consumed, locale) }} kcal
-        </span>
+        <div class="flex items-center gap-1">
+          <span class="text-sm text-slate-500 dark:text-slate-400">
+            {{ formatKcal(consumed, locale) }} kcal
+          </span>
+          <DataMenu />
+        </div>
       </div>
       <EntryList :entries="entries" @edit="openEdit" @delete="askDelete" />
     </section>
