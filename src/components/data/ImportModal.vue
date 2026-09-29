@@ -16,8 +16,15 @@ const diary = useDiaryStore()
 
 const text = ref('')
 const mode = ref('merge') // 'merge' | 'replace'
-const error = ref('')
+const errorMessage = ref('')
 const success = ref(null) // { dayCount, entryCount }
+
+const ERROR_KEYS = {
+  empty: 'data.errors.empty',
+  invalidJson: 'data.errors.invalidJson',
+  invalidFormat: 'data.errors.invalidFormat',
+  noDays: 'data.errors.noDays',
+}
 
 watch(
   () => props.open,
@@ -25,7 +32,7 @@ watch(
     if (!open) return
     text.value = ''
     mode.value = 'merge'
-    error.value = ''
+    errorMessage.value = ''
     success.value = null
   },
 )
@@ -40,14 +47,14 @@ const entryCountText = computed(() => {
 })
 
 function doImport() {
-  error.value = ''
+  errorMessage.value = ''
   success.value = null
 
   let days
   try {
     days = parseImportText(text.value)
   } catch (e) {
-    error.value = e.code || 'invalidJson'
+    errorMessage.value = t(ERROR_KEYS[e.code] || 'data.errors.invalidJson')
     return
   }
 
@@ -58,7 +65,7 @@ function doImport() {
 </script>
 
 <template>
-  <BaseModal :open="open" :title="t('settings.importTitle')" @close="emit('close')">
+  <BaseModal :open="open" :title="t('data.importTitle')" @close="emit('close')">
     <div class="space-y-4">
       <p class="text-sm text-slate-600 dark:text-slate-300">{{ t('data.importHint') }}</p>
 
@@ -100,8 +107,8 @@ function doImport() {
         </p>
       </div>
 
-      <p v-if="error" class="text-xs text-rose-600 dark:text-rose-400">
-        {{ t(`data.errors.${error}`) }}
+      <p v-if="errorMessage" class="text-xs text-rose-600 dark:text-rose-400">
+        {{ errorMessage }}
       </p>
 
       <p v-if="success" class="text-sm font-medium text-emerald-600 dark:text-emerald-400">
@@ -123,7 +130,7 @@ function doImport() {
           class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
           @click="doImport"
         >
-          {{ t('settings.importAction') }}
+          {{ t('data.importAction') }}
         </button>
       </div>
     </template>

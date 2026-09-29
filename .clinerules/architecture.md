@@ -15,7 +15,7 @@ components → Pinia stores → storageService → localStorage (guest) | Supaba
   - `authStore` — Supabase auth: `signUp/signIn/signOut/resetPassword/updatePassword`, `onAuthStateChange`.
 - **`src/utils/`** — pure, unit-tested logic: `date`, `analysis`, `format`, `id`, `units`, `nutrition`, `authErrors`, `dataTransfer` (JSON diary export/import).
 - **`src/composables/`** — `useTheme` (resolve/apply theme), `useServingCalc` (shared serving math).
-- **`src/components/`** — `ui/`, `layout/`, `diary/`, `data/` (export/import modals); **`src/views/`** — route pages.
+- **`src/components/`** — `ui/`, `layout/`, `diary/`, `data/` (export/import menu + modals); **`src/views/`** — route pages.
 
 ## Rules of thumb
 - Never bypass `storageService` for persistence.
