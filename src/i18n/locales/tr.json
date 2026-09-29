@@ -169,7 +169,7 @@
     "entryCountOne": "{count} kayıt",
     "entryCount": "{count} kayıt",
     "importHint": "Bir güne ait JSON'u yapıştırın. Seçili günün kayıtları değiştirilir.",
-    "importPlaceholder": "{ \"entries\": [ { \"name\": \"Muz\", \"calories\": 105 } ] }",
+    "importPlaceholder": "Dışa aktarılan JSON'u buraya yapıştırın",
     "imported": "İçe aktarıldı",
     "errors": {
       "empty": "Önce bir JSON yapıştırın.",

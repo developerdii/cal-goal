@@ -169,7 +169,7 @@
     "entryCountOne": "{count} entry",
     "entryCount": "{count} entries",
     "importHint": "Paste the JSON for one day. The selected day's entries are replaced.",
-    "importPlaceholder": "{ \"entries\": [ { \"name\": \"Banana\", \"calories\": 105 } ] }",
+    "importPlaceholder": "Paste the exported JSON here",
     "imported": "Imported",
     "errors": {
       "empty": "Paste some JSON first.",
