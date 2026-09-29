@@ -159,28 +159,23 @@
   },
   "data": {
     "menuLabel": "Diğer seçenekler",
-    "exportTitle": "Günlüğü dışa aktar",
-    "importTitle": "Günlüğü içe aktar",
+    "exportTitle": "Günü dışa aktar",
+    "importTitle": "Güne içe aktar",
     "exportAction": "Dışa aktar",
     "importAction": "İçe aktar",
     "copy": "Kopyala",
     "copied": "Kopyalandı",
-    "noData": "Dışa aktarılacak günlük verisi henüz yok.",
-    "dayCountOne": "{count} gün",
-    "dayCount": "{count} gün",
+    "noData": "Bu güne ait kayıt yok.",
     "entryCountOne": "{count} kayıt",
     "entryCount": "{count} kayıt",
-    "importHint": "Dışa aktardığınız JSON'u yapıştırın. Var olan günler değiştirilir.",
-    "importPlaceholder": "{ \"days\": { \"2026-09-29\": { \"date\": \"2026-09-29\", \"entries\": [] } } }",
-    "modeMerge": "Birleştir",
-    "modeReplace": "Tümünü değiştir",
-    "modeReplaceHint": "Mevcut tüm günlük günleriniz değiştirilir.",
+    "importHint": "Bir güne ait JSON'u yapıştırın. Seçili günün kayıtları değiştirilir.",
+    "importPlaceholder": "{ \"entries\": [ { \"name\": \"Muz\", \"calories\": 105 } ] }",
     "imported": "İçe aktarıldı",
     "errors": {
       "empty": "Önce bir JSON yapıştırın.",
       "invalidJson": "Bu geçerli bir JSON gibi görünmüyor.",
       "invalidFormat": "JSON, günlük biçimiyle eşleşmiyor.",
-      "noDays": "Yapıştırılan veride günlük günü bulunamadı."
+      "noEntries": "Yapıştırılan veride kayıt bulunamadı."
     }
   },
   "units": {

@@ -3,10 +3,11 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '@/components/ui/BaseModal.vue'
 import { useDiaryStore } from '@/stores/diaryStore'
-import { buildExportDoc, countEntries } from '@/utils/dataTransfer'
+import { buildDayExport } from '@/utils/dataTransfer'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
+  dateKey: { type: String, required: true },
 })
 
 const emit = defineEmits(['close'])
@@ -17,18 +18,12 @@ const diary = useDiaryStore()
 const copied = ref(false)
 let copiedTimer = null
 
-const hasData = computed(() => Object.keys(diary.days).length > 0)
-const exportDoc = computed(() => buildExportDoc(diary.days))
+const exportDoc = computed(() => buildDayExport(diary.getDay(props.dateKey)))
+const hasData = computed(() => exportDoc.value.entries.length > 0)
 
 const exportText = computed(() => JSON.stringify(exportDoc.value, null, 2))
-const dayCount = computed(() => Object.keys(exportDoc.value.days).length)
-const entryCount = computed(() => countEntries(exportDoc.value.days))
+const entryCount = computed(() => exportDoc.value.entries.length)
 
-const dayCountText = computed(() =>
-  dayCount.value === 1
-    ? t('data.dayCountOne', { count: dayCount.value })
-    : t('data.dayCount', { count: dayCount.value }),
-)
 const entryCountText = computed(() =>
   entryCount.value === 1
     ? t('data.entryCountOne', { count: entryCount.value })
@@ -74,7 +69,7 @@ async function copy() {
 
     <div v-else class="space-y-4">
       <p class="text-xs text-slate-500 dark:text-slate-400">
-        {{ dayCountText }} · {{ entryCountText }}
+        {{ entryCountText }}
       </p>
 
       <textarea
@@ -97,7 +92,7 @@ async function copy() {
         </button>
         <button
           type="button"
-          :disabled="dayCount === 0"
+          :disabled="!hasData"
           class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60"
           @click="copy"
         >

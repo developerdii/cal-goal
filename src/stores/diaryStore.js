@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { storageService } from '@/services/storageService'
 import { createId } from '@/utils/id'
-import { mergeDays } from '@/utils/dataTransfer'
 
 // An entry is either:
 //   - item:  { id, type: 'item',  name, calories, createdAt }
@@ -93,13 +92,9 @@ export const useDiaryStore = defineStore('diary', () => {
     storageService.clearDays()
   }
 
-  // Bulk import: merge incoming days over existing (or replace all). Days are
-  // keyed by date; importing a date replaces that whole day's entries.
-  function importDays(daysMap, { replace = false } = {}) {
-    const next = replace ? { ...daysMap } : mergeDays(days.value, daysMap)
-    days.value = next
-    storageService.saveDays(next)
-    return next
+  // Replaces all entries for a single day (used by single-day import).
+  function setEntries(dateKey, entries) {
+    persistDay(dateKey, entries)
   }
 
   return {
@@ -113,6 +108,6 @@ export const useDiaryStore = defineStore('diary', () => {
     updateEntry,
     removeEntry,
     reset,
-    importDays,
+    setEntries,
   }
 })

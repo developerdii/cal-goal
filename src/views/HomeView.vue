@@ -199,7 +199,7 @@ const arrowClass =
           <span class="text-sm text-slate-500 dark:text-slate-400">
             {{ formatKcal(consumed, locale) }} kcal
           </span>
-          <DataMenu />
+          <DataMenu :date-key="selectedKey" />
         </div>
       </div>
       <EntryList :entries="entries" @edit="openEdit" @delete="askDelete" />
