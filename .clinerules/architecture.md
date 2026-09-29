@@ -10,12 +10,12 @@ components → Pinia stores → storageService → localStorage (guest) | Supaba
 - **`src/stores/`** — Pinia state; each has an `init()` called from `App.vue` after `storageService.init()`:
   - `appStore` — locale + theme prefs.
   - `settingsStore` — maintenance calories, goal type, goal amount, current weight; exposes computed `dailyTarget`.
-  - `diaryStore` — days keyed by date; entries (`item`/`group`); `totalForDay()`.
+  - `diaryStore` — days keyed by date; entries (`item`/`group`); `totalForDay()`, `importDays()` (bulk merge/replace).
   - `foodsStore` — saved foods/groups library; `upsert` (by id or name+type), `recent()`, `all()`, `toggleFavorite()`, `sorted()` (favorites sort first).
   - `authStore` — Supabase auth: `signUp/signIn/signOut/resetPassword/updatePassword`, `onAuthStateChange`.
-- **`src/utils/`** — pure, unit-tested logic: `date`, `analysis`, `format`, `id`, `units`, `nutrition`, `authErrors`.
+- **`src/utils/`** — pure, unit-tested logic: `date`, `analysis`, `format`, `id`, `units`, `nutrition`, `authErrors`, `dataTransfer` (JSON diary export/import).
 - **`src/composables/`** — `useTheme` (resolve/apply theme), `useServingCalc` (shared serving math).
-- **`src/components/`** — `ui/`, `layout/`, `diary/`; **`src/views/`** — route pages.
+- **`src/components/`** — `ui/`, `layout/`, `diary/`, `data/` (export/import modals); **`src/views/`** — route pages.
 
 ## Rules of thumb
 - Never bypass `storageService` for persistence.

@@ -5,6 +5,8 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { useDiaryStore } from '@/stores/diaryStore'
 import { useAuthStore } from '@/stores/authStore'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import ExportModal from '@/components/data/ExportModal.vue'
+import ImportModal from '@/components/data/ImportModal.vue'
 import { storageService } from '@/services/storageService'
 import { formatKcal } from '@/utils/format'
 
@@ -36,6 +38,8 @@ const goalAmountInput = ref(String(settings.goalAmount))
 const weightInput = ref(String(settings.currentWeight))
 const saved = ref(false)
 const resetOpen = ref(false)
+const exportOpen = ref(false)
+const importOpen = ref(false)
 
 let savedTimer = null
 
@@ -267,6 +271,53 @@ const inputClass =
 
     <section class="mt-8 border-t border-slate-200 pt-5 dark:border-slate-800">
       <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">
+        {{ t('settings.dataSection') }}
+      </h3>
+      <p class="mt-0.5 text-xs text-slate-400">{{ t('settings.dataSectionHint') }}</p>
+      <div class="mt-2 space-y-2">
+        <div
+          class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+        >
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
+              {{ t('settings.exportTitle') }}
+            </p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ t('settings.exportDescription') }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="shrink-0 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            @click="exportOpen = true"
+          >
+            {{ t('settings.exportAction') }}
+          </button>
+        </div>
+        <div
+          class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
+        >
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
+              {{ t('settings.importTitle') }}
+            </p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ t('settings.importDescription') }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="shrink-0 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            @click="importOpen = true"
+          >
+            {{ t('settings.importAction') }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-8 border-t border-slate-200 pt-5 dark:border-slate-800">
+      <h3 class="text-sm font-semibold text-slate-500 dark:text-slate-400">
         {{ t('settings.dangerZone') }}
       </h3>
       <div
@@ -296,5 +347,8 @@ const inputClass =
       @confirm="confirmReset"
       @cancel="resetOpen = false"
     />
+
+    <ExportModal :open="exportOpen" @close="exportOpen = false" />
+    <ImportModal :open="importOpen" @close="importOpen = false" />
   </div>
 </template>
