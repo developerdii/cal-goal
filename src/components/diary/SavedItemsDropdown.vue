@@ -65,10 +65,11 @@ function computePosition() {
   const spaceBelow = Math.max(0, viewportBottom - btn.bottom - gap)
   const placeAbove = props.placement === 'up' && spaceAbove >= Math.min(spaceBelow, 180)
   const availableHeight = placeAbove ? spaceAbove : spaceBelow
+  const maxPopupHeight = 280 // Search field plus the original 14rem results area.
   const style = {
     left: pr ? `${pr.left + pad}px` : `${btn.left}px`,
     width: pr ? `${pr.width - pad * 2}px` : `${btn.width}px`,
-    maxHeight: `${Math.max(0, availableHeight)}px`,
+    maxHeight: `${Math.min(maxPopupHeight, availableHeight)}px`,
   }
   if (placeAbove) {
     style.bottom = `${window.innerHeight - (btn.top - gap)}px`
