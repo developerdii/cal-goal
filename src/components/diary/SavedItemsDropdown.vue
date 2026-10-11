@@ -56,15 +56,24 @@ function computePosition() {
   const btn = el.getBoundingClientRect()
   const panel = el.closest('.modal-panel')
   const pr = panel ? panel.getBoundingClientRect() : null
+  const viewport = window.visualViewport
+  const viewportTop = viewport?.offsetTop ?? 0
+  const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight)
   const pad = 20
+  const gap = 8
+  const spaceAbove = Math.max(0, btn.top - viewportTop - gap)
+  const spaceBelow = Math.max(0, viewportBottom - btn.bottom - gap)
+  const placeAbove = props.placement === 'up' && spaceAbove >= Math.min(spaceBelow, 180)
+  const availableHeight = placeAbove ? spaceAbove : spaceBelow
   const style = {
     left: pr ? `${pr.left + pad}px` : `${btn.left}px`,
     width: pr ? `${pr.width - pad * 2}px` : `${btn.width}px`,
+    maxHeight: `${Math.max(0, availableHeight)}px`,
   }
-  if (props.placement === 'down') {
-    style.top = `${btn.bottom + 8}px`
+  if (placeAbove) {
+    style.bottom = `${window.innerHeight - (btn.top - gap)}px`
   } else {
-    style.bottom = `${window.innerHeight - btn.top + 8}px`
+    style.top = `${btn.bottom + gap}px`
   }
   popupStyle.value = style
 }
@@ -130,6 +139,8 @@ onMounted(() => {
   document.addEventListener('keydown', onDocumentKeydown)
   window.addEventListener('resize', onResize)
   window.addEventListener('scroll', onScroll, true)
+  window.visualViewport?.addEventListener('resize', onResize)
+  window.visualViewport?.addEventListener('scroll', onScroll)
 })
 
 onBeforeUnmount(() => {
@@ -137,6 +148,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', onDocumentKeydown)
   window.removeEventListener('resize', onResize)
   window.removeEventListener('scroll', onScroll, true)
+  window.visualViewport?.removeEventListener('resize', onResize)
+  window.visualViewport?.removeEventListener('scroll', onScroll)
 })
 </script>
 
@@ -162,7 +175,7 @@ onBeforeUnmount(() => {
       <div
         v-if="open"
         ref="popupRef"
-        class="fixed z-[60] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900"
+        class="fixed z-[60] flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900"
         :style="popupStyle"
       >
         <div class="p-2.5">
@@ -175,7 +188,7 @@ onBeforeUnmount(() => {
           />
         </div>
 
-        <div class="max-h-56 overflow-y-auto px-1.5 pb-2">
+        <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1.5 pb-2">
           <div
             v-for="item in filtered"
             :key="item.id"
