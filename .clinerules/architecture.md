@@ -16,6 +16,7 @@ components → Pinia stores → storageService → localStorage (guest) | Supaba
 - **`src/utils/`** — pure, unit-tested logic: `date`, `analysis`, `format`, `id`, `units`, `nutrition`, `authErrors`, `dataTransfer` (JSON diary export/import).
 - **`src/composables/`** — `useTheme` (resolve/apply theme), `useServingCalc` (shared serving math).
 - **`src/components/`** — `ui/`, `layout/`, `diary/`, `data/` (export/import menu + modals); **`src/views/`** — route pages.
+- `SavedItemsDropdown` is teleported to `body`; its position and maximum height track the mobile visual viewport so its search results remain usable with the on-screen keyboard open.
 
 ## Rules of thumb
 - Never bypass `storageService` for persistence.
